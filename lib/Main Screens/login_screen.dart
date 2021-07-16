@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jw_phonebookapp_005/Main%20Screens/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -62,7 +63,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         key: globalFormKey,
                         child: Column(
                           children: <Widget>[
-
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -154,9 +154,33 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPrimary: Color(0xFFFCC13A), // foreground
                                 ),
                                 onPressed: () {},
-                                child: Text("Login", style: TextStyle(fontSize: 18),),
+                                child: Text(
+                                  "Login",
+                                  style: TextStyle(fontSize: 18),
+                                ),
                               ),
                             ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            new GestureDetector(
+                                onTap: () {},
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                    bottom: 5, // Space between underline and text
+                                  ),
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                    color: Colors.amber,
+                                    width: 2.0, // Underline thickness
+                                  ))),
+                                  child: Text(
+                                    "Forgot Password",
+                                    style:
+                                        TextStyle(color: Color(0xFFFCC13A), fontWeight: FontWeight.bold, fontSize: 14),
+                                  ),
+                                )),
                           ],
                         ),
                       ),

@@ -68,7 +68,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           key: globalFormKey,
                           child: Column(
                             children: <Widget>[
-
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -84,8 +83,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               new TextFormField(
                                 focusNode: nameFocus,
                                 onTap: _requestFocusName,
-                                keyboardType: TextInputType.emailAddress,
+                                keyboardType: TextInputType.name,
                                 textInputAction: TextInputAction.next,
+                                textCapitalization: TextCapitalization.sentences,
                                 //onSved:,
                                 validator: (input) => input!.length < 6 ? "Name is less than 6 characters" : null,
                                 decoration: new InputDecoration(
@@ -190,7 +190,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     onPrimary: Color(0xFFFCC13A), // foreground
                                   ),
                                   onPressed: () {},
-                                  child: Text("Login", style: TextStyle(fontSize: 18),),
+                                  child: Text(
+                                    "Register",
+                                    style: TextStyle(fontSize: 18),
+                                  ),
                                 ),
                               ),
                             ],
