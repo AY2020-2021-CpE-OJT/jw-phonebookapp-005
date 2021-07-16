@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:jw_phonebookapp_005/Main%20Screens/register_screen.dart';
+import 'package:jw_phonebookapp_005/model/login_model.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -16,12 +16,14 @@ class _LoginScreenState extends State<LoginScreen> {
   bool hidePassword = true;
   FocusNode emailFocus = new FocusNode();
   FocusNode passwordFocus = new FocusNode();
+  late LoginRequestModel requestModel;
 
   @override
   void initState() {
     super.initState();
     emailFocus = FocusNode();
     passwordFocus = FocusNode();
+    requestModel = new LoginRequestModel( email: '', password: '');
   }
 
   @override
@@ -80,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               onTap: _requestFocusEmail,
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next,
-                              //onSved:,
+                              onSaved: (input) => requestModel.email = input!,
                               validator: (input) => !input!.contains("@") ? "Email Address invalid" : null,
                               decoration: new InputDecoration(
                                 //hintText: "Email Address",
@@ -109,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               focusNode: passwordFocus,
                               onTap: _requestFocusPassword,
                               keyboardType: TextInputType.text,
-                              //onSved:,
+                              onSaved: (input) => requestModel.password = input!,
                               validator: (input) => input!.length < 6 ? "Password is less than 6 characters" : null,
                               obscureText: hidePassword,
                               decoration: new InputDecoration(
@@ -153,7 +155,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                   primary: Color(0xFF5B3415), // background
                                   onPrimary: Color(0xFFFCC13A), // foreground
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                  if (validateAndSave()) {
+                                    print(requestModel.toJson());
+                                  }
+                                },
                                 child: Text(
                                   "Login",
                                   style: TextStyle(fontSize: 18),
@@ -164,23 +171,23 @@ class _LoginScreenState extends State<LoginScreen> {
                               height: 20,
                             ),
                             new GestureDetector(
-                                onTap: () {},
-                                child: Container(
-                                  padding: EdgeInsets.only(
-                                    bottom: 5, // Space between underline and text
-                                  ),
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                    color: Colors.amber,
-                                    width: 2.0, // Underline thickness
-                                  ))),
-                                  child: Text(
-                                    "Forgot Password",
-                                    style:
-                                        TextStyle(color: Color(0xFFFCC13A), fontWeight: FontWeight.bold, fontSize: 14),
-                                  ),
-                                )),
+                              onTap: () {},
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                  bottom: 5, // Space between underline and text
+                                ),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                  color: Colors.amber,
+                                  width: 2.0, // Underline thickness
+                                ))),
+                                child: Text(
+                                  "Forgot Password",
+                                  style: TextStyle(color: Color(0xFFFCC13A), fontWeight: FontWeight.bold, fontSize: 14),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -193,6 +200,16 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  bool validateAndSave() {
+    final form = globalFormKey.currentState;
+    if (form!.validate()) {
+      form.save();
+      return true;
+    } else {
+      return false;
+    }
   }
 
   void _requestFocusEmail() {
