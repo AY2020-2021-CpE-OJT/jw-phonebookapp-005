@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -55,16 +53,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Theme.of(context).primaryColor,
                         boxShadow: [
                           BoxShadow(
-                              color: Theme.of(context).hintColor.withOpacity(0.2), offset: Offset(0, 10), blurRadius: 20),
+                              color: Theme.of(context).hintColor.withOpacity(0.2),
+                              offset: Offset(0, 10),
+                              blurRadius: 20),
                         ],
                       ),
                       child: Form(
                         key: globalFormKey,
                         child: Column(
                           children: <Widget>[
-                            // SizedBox(
-                            //   height: 20,
-                            // ),
+
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -112,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               onTap: _requestFocusPassword,
                               keyboardType: TextInputType.text,
                               //onSved:,
-                              validator: (input) => input!.length < 3 ? "Password is less than 6 characters" : null,
+                              validator: (input) => input!.length < 6 ? "Password is less than 6 characters" : null,
                               obscureText: hidePassword,
                               decoration: new InputDecoration(
                                   enabledBorder: OutlineInputBorder(
@@ -146,19 +144,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             SizedBox(
                               width: double.infinity,
-                              height: 45,
+                              height: 55,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18.0),
+                                    borderRadius: BorderRadius.circular(24.0),
                                   ),
                                   primary: Color(0xFF5B3415), // background
                                   onPrimary: Color(0xFFFCC13A), // foreground
                                 ),
                                 onPressed: () {},
-                                child: Text(
-                                  "Login"
-                                ),
+                                child: Text("Login", style: TextStyle(fontSize: 18),),
                               ),
                             ),
                           ],

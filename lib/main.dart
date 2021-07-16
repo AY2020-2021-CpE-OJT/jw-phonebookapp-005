@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'Main Screens/login_screen.dart';
+import 'Main Screens/menu_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -33,7 +32,7 @@ class MyApp extends StatelessWidget {
         ),
         debugShowCheckedModeBanner: false,
         //
-        home: LoginScreen(),
+        home: MainMenu(),
         );
   }
 }
