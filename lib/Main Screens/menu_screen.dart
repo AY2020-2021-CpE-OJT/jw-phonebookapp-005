@@ -88,7 +88,7 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
                         margin: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: Theme.of(context).accentColor,
+                          color: Colors.white,
                           boxShadow: [
                             BoxShadow(
                                 color: Theme.of(context).hintColor.withOpacity(0.2),

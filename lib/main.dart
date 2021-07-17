@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Poppins',
         primaryColor: Color(0xFFFCC13A),
-        accentColor: Colors.white,
+        accentColor: Color(0xFFFCC13A),
         textTheme: TextTheme(
             headline1: TextStyle(
               fontSize: 22.0,

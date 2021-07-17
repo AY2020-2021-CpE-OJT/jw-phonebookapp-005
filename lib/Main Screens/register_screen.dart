@@ -56,7 +56,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         margin: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: Theme.of(context).accentColor,
+                          color: Colors.white,
                           boxShadow: [
                             BoxShadow(
                                 color: Theme.of(context).hintColor.withOpacity(0.2),
@@ -242,16 +242,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
           content: const Text("Account creation will be stopped"),
           actions: <Widget>[
             TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: const Text("CANCEL", style: TextStyle(color: Colors.redAccent))),
-            TextButton(
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
                     context, MaterialPageRoute(builder: (context) => MainMenu()), (_) => false);
               },
-              child: const Text("CONFIRM", style: TextStyle(color: Color(0xFFFCC13A))),
+              child: const Text(
+                "CONFIRM",
+                style: TextStyle(color: Colors.redAccent),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text(
+                "CANCEL",
+                style: TextStyle(
+                  color: Color(0xFFFCC13A),
+                ),
+              ),
             ),
           ],
         );

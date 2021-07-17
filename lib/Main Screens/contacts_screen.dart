@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         title: Text("Contacts", style: TextStyle(color: Color(0xFF5B3415))),
         leading: Image.asset(
-          'assets/icon/pb-logo-fg.png',
+          'assets/icon/pb-logo-splash.png',
           height: 80.0,
           width: 80.0,
         ),
@@ -57,9 +57,40 @@ class _HomePageState extends State<HomePage> {
               color: Color(0x805B3415),
             ),
             onPressed: () async {
-              final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-              sharedPreferences.remove('data');
-              Navigator.pushNamedAndRemoveUntil(context, '/menu', (_) => false);
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return new AlertDialog(
+                    title: const Text("Logout",
+                        style: TextStyle(
+                          color: Color(0xFF5B3415),
+                          fontWeight: FontWeight.bold,
+                        )),
+                    content: const Text("Are you sure to Logout?"),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () async {
+                          final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                          sharedPreferences.remove('data');
+                          Navigator.pushNamedAndRemoveUntil(context, '/menu', (_) => false);
+                        },
+                        child: const Text("LOGOUT", style: TextStyle(color: Colors.redAccent)),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                        child: const Text(
+                          "CANCEL",
+                          style: TextStyle(
+                            color: Color(0xFFFCC13A),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
             },
           ),
         ],
@@ -69,6 +100,7 @@ class _HomePageState extends State<HomePage> {
           builder: (context, snapshot) {
             return _users.length != 0
                 ? RefreshIndicator(
+              color: Color(0xFFFCC13A),
                     child: ListView.builder(
                         padding: EdgeInsets.all(12.0),
                         itemCount: _users.length,
@@ -271,7 +303,7 @@ class _HomePageState extends State<HomePage> {
                   )
                 : Center(
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFCC13A)),
                       backgroundColor: Color(0xFF5B3415),
                     ),
                   );
