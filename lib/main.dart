@@ -17,8 +17,8 @@ class MyApp extends StatelessWidget {
       title: 'Contacts',
       theme: ThemeData(
         fontFamily: 'Poppins',
-        primaryColor: Colors.white,
-        accentColor: Color(0xFFFCC13A),
+        primaryColor: Color(0xFFFCC13A),
+        accentColor: Colors.white,
         textTheme: TextTheme(
             headline1: TextStyle(
               fontSize: 22.0,

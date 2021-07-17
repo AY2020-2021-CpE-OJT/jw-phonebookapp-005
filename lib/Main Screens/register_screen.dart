@@ -43,7 +43,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
           key: scaffoldKey,
-          backgroundColor: Theme.of(context).accentColor,
+          backgroundColor: Theme.of(context).primaryColor,
           body: Center(
             child: SingleChildScrollView(
               child: Column(
@@ -56,7 +56,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         margin: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).accentColor,
                           boxShadow: [
                             BoxShadow(
                                 color: Theme.of(context).hintColor.withOpacity(0.2),
@@ -92,20 +92,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   //hintText: "Email Address",
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Theme.of(context).accentColor.withOpacity(0.2),
+                                      color: Theme.of(context).primaryColor.withOpacity(0.2),
                                     ),
                                   ),
                                   disabledBorder: InputBorder.none,
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Theme.of(context).accentColor,
+                                      color: Theme.of(context).primaryColor,
                                     ),
                                   ),
                                   labelText: 'Name',
                                   labelStyle: TextStyle(
                                     color: nameFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
                                   ),
-                                  prefixIcon: Icon(Icons.account_box_rounded, color: Theme.of(context).accentColor),
+                                  prefixIcon: Icon(Icons.account_box_rounded, color: Theme.of(context).primaryColor),
                                 ),
                               ),
                               SizedBox(
@@ -122,20 +122,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   //hintText: "Email Address",
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Theme.of(context).accentColor.withOpacity(0.2),
+                                      color: Theme.of(context).primaryColor.withOpacity(0.2),
                                     ),
                                   ),
                                   disabledBorder: InputBorder.none,
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Theme.of(context).accentColor,
+                                      color: Theme.of(context).primaryColor,
                                     ),
                                   ),
                                   labelText: 'Email Address',
                                   labelStyle: TextStyle(
                                     color: emailFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
                                   ),
-                                  prefixIcon: Icon(Icons.email, color: Theme.of(context).accentColor),
+                                  prefixIcon: Icon(Icons.email, color: Theme.of(context).primaryColor),
                                 ),
                               ),
                               SizedBox(
@@ -151,27 +151,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 decoration: new InputDecoration(
                                     enabledBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
-                                        color: Theme.of(context).accentColor.withOpacity(0.2),
+                                        color: Theme.of(context).primaryColor.withOpacity(0.2),
                                       ),
                                     ),
                                     disabledBorder: InputBorder.none,
                                     focusedBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
-                                        color: Theme.of(context).accentColor,
+                                        color: Theme.of(context).primaryColor,
                                       ),
                                     ),
                                     labelText: 'Password',
                                     labelStyle: TextStyle(
                                       color: passwordFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
                                     ),
-                                    prefixIcon: Icon(Icons.lock, color: Theme.of(context).accentColor),
+                                    prefixIcon: Icon(Icons.lock, color: Theme.of(context).primaryColor),
                                     suffixIcon: IconButton(
                                       onPressed: () {
                                         setState(() {
                                           hidePassword = !hidePassword;
                                         });
                                       },
-                                      color: Theme.of(context).accentColor.withOpacity(0.4),
+                                      color: Theme.of(context).primaryColor.withOpacity(0.4),
                                       icon: Icon(hidePassword ? Icons.visibility : Icons.visibility_off),
                                     )),
                               ),

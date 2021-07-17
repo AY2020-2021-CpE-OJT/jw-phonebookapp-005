@@ -37,11 +37,14 @@ class _SharedServiceState extends State<SharedService> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).accentColor,
-      body: Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFCC13A)),
-          backgroundColor: Color(0xFF5B3415),
+      backgroundColor: Theme.of(context).primaryColor,
+      body: WillPopScope(
+        onWillPop: () async => false,
+        child: Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFF3D697)),
+            backgroundColor: Color(0xFF5B3415),
+          ),
         ),
       ),
     );
