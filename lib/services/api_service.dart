@@ -14,7 +14,6 @@ class APIService {
     }, body: jsonEncode(<String, dynamic> {'email': email, 'password': password}));
     if (response.statusCode == 200 || response.statusCode == 400) {
       String jsonDataString = response.body.toString().replaceAll("\n","");
-      print(jsonDataString);
       var _data = jsonDecode(jsonDataString);
       return LoginResponseModel.fromJson(_data);
     } else {
