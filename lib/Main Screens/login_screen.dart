@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jw_phonebookapp_005/ProgressHUD.dart';
+import 'package:jw_phonebookapp_005/api/api_service.dart';
 import 'package:jw_phonebookapp_005/model/login_model.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -16,14 +19,19 @@ class _LoginScreenState extends State<LoginScreen> {
   bool hidePassword = true;
   FocusNode emailFocus = new FocusNode();
   FocusNode passwordFocus = new FocusNode();
+
+  // final emailController = TextEditingController();
+  // final passController = TextEditingController();
+
   late LoginRequestModel requestModel;
+  bool isApiCallProcess = false;
 
   @override
   void initState() {
     super.initState();
     emailFocus = FocusNode();
     passwordFocus = FocusNode();
-    requestModel = new LoginRequestModel( email: '', password: '');
+    requestModel = new LoginRequestModel(email: '', password: '');
   }
 
   @override
@@ -35,6 +43,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return ProgressHUD(
+      child: buildUI(context),
+      inAsyncCall: isApiCallProcess,
+      opacity: 0.3,
+    );
+  }
+
+  Widget buildUI(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -85,7 +101,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               onSaved: (input) => requestModel.email = input!,
                               validator: (input) => !input!.contains("@") ? "Email Address invalid" : null,
                               decoration: new InputDecoration(
-                                //hintText: "Email Address",
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Theme.of(context).accentColor.withOpacity(0.2),
@@ -115,31 +130,32 @@ class _LoginScreenState extends State<LoginScreen> {
                               validator: (input) => input!.length < 6 ? "Password is less than 6 characters" : null,
                               obscureText: hidePassword,
                               decoration: new InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Theme.of(context).accentColor.withOpacity(0.2),
-                                    ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Theme.of(context).accentColor.withOpacity(0.2),
                                   ),
-                                  disabledBorder: InputBorder.none,
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Theme.of(context).accentColor,
-                                    ),
+                                ),
+                                disabledBorder: InputBorder.none,
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Theme.of(context).accentColor,
                                   ),
-                                  labelText: 'Password',
-                                  labelStyle: TextStyle(
-                                    color: passwordFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
-                                  ),
-                                  prefixIcon: Icon(Icons.lock, color: Theme.of(context).accentColor),
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        hidePassword = !hidePassword;
-                                      });
-                                    },
-                                    color: Theme.of(context).accentColor.withOpacity(0.4),
-                                    icon: Icon(hidePassword ? Icons.visibility : Icons.visibility_off),
-                                  )),
+                                ),
+                                labelText: 'Password',
+                                labelStyle: TextStyle(
+                                  color: passwordFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
+                                ),
+                                prefixIcon: Icon(Icons.lock, color: Theme.of(context).accentColor),
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      hidePassword = !hidePassword;
+                                    });
+                                  },
+                                  color: Theme.of(context).accentColor.withOpacity(0.4),
+                                  icon: Icon(hidePassword ? Icons.visibility : Icons.visibility_off),
+                                ),
+                              ),
                             ),
                             SizedBox(
                               height: 20,
@@ -158,7 +174,29 @@ class _LoginScreenState extends State<LoginScreen> {
                                 onPressed: () {
                                   FocusManager.instance.primaryFocus?.unfocus();
                                   if (validateAndSave()) {
-                                    print(requestModel.toJson());
+                                    setState(() {
+                                      isApiCallProcess = true;
+                                    });
+                                    APIService apiService = new APIService();
+                                    apiService.login(requestModel).then(
+                                      (value) {
+                                        setState(() {
+                                          isApiCallProcess = false;
+                                        });
+                                        if (value.authToken.isNotEmpty) {
+                                          final flutterToast = Fluttertoast.showToast(msg: "Login Successful");
+                                          final snackBar = SnackBar(
+                                            content: Text("Login Successful"),
+                                          );
+                                          scaffoldKey.currentState!.showSnackBar(snackBar);
+                                        } else {
+                                          final snackBar = SnackBar(
+                                            content: Text(value.error),
+                                          );
+                                          scaffoldKey.currentState!.showSnackBar(snackBar);
+                                        }
+                                      },
+                                    );
                                   }
                                 },
                                 child: Text(
