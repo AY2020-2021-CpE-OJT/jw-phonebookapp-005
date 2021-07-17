@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:jw_phonebookapp_005/ProgressHUD.dart';
-import 'package:jw_phonebookapp_005/api/api_service.dart';
+import 'package:jw_phonebookapp_005/services/ProgressHUD.dart';
+import 'package:jw_phonebookapp_005/services/api_service.dart';
 import 'package:jw_phonebookapp_005/model/login_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -19,9 +20,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool hidePassword = true;
   FocusNode emailFocus = new FocusNode();
   FocusNode passwordFocus = new FocusNode();
-
-  // final emailController = TextEditingController();
-  // final passController = TextEditingController();
 
   late LoginRequestModel requestModel;
   bool isApiCallProcess = false;
@@ -171,8 +169,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   primary: Color(0xFF5B3415), // background
                                   onPrimary: Color(0xFFFCC13A), // foreground
                                 ),
-                                onPressed: () {
+                                onPressed: () async {
                                   FocusManager.instance.primaryFocus?.unfocus();
+                                  final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                                  sharedPreferences.setString('data', requestModel.toJson().toString());
                                   if (validateAndSave()) {
                                     setState(() {
                                       isApiCallProcess = true;
@@ -184,16 +184,41 @@ class _LoginScreenState extends State<LoginScreen> {
                                           isApiCallProcess = false;
                                         });
                                         if (value.authToken.isNotEmpty) {
-                                          final flutterToast = Fluttertoast.showToast(msg: "Login Successful");
-                                          final snackBar = SnackBar(
-                                            content: Text("Login Successful"),
-                                          );
-                                          scaffoldKey.currentState!.showSnackBar(snackBar);
+                                          globalFormKey.currentState!.reset();
+                                          Fluttertoast.showToast(msg: "Login Successful");
+                                          Navigator.of(context).pushReplacementNamed('/home');
                                         } else {
-                                          final snackBar = SnackBar(
-                                            content: Text(value.error),
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return new AlertDialog(
+                                                title: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.error,
+                                                      color: Colors.redAccent,
+                                                    ),
+                                                    Text(
+                                                      "  Login",
+                                                      style: TextStyle(
+                                                        color: Color(0xFF5B3415),
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                content: new Text(value.error),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child:
+                                                          const Text("OK", style: TextStyle(color: Color(0xFFFCC13A)))),
+                                                ],
+                                              );
+                                            },
                                           );
-                                          scaffoldKey.currentState!.showSnackBar(snackBar);
                                         }
                                       },
                                     );
