@@ -1,14 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
-//import 'package:phonebook_app/manipulateContact/updateContact.dart';
+import 'package:jw_phonebookapp_005/create_screens/create_contact.dart';
+import 'package:jw_phonebookapp_005/update_screens/update_contact.dart';
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
-//import 'manipulateContact/createContact.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -17,29 +13,33 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late String authKey = '';
+  var authHeaders;
 
   Future getAuthKeyData() async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var authKeyObtained = sharedPreferences.getString('authKey');
-    setState(() {
-      if (authKeyObtained != null) {
-        authKey = authKeyObtained;
-        fetchContacts(authKey);
-      }
-    });
+    setState(
+      () {
+        if (authKeyObtained != null) {
+          authKey = authKeyObtained;
+          authHeaders = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'auth-token': authKey.toString(),
+          };
+          fetchContacts(authHeaders);
+        }
+      },
+    );
   }
 
   final String apiUrlget = "http://192.168.1.8:8080/api/posts";
 
   List<dynamic> _users = [];
 
-  void fetchContacts(String authToken) async {
+  void fetchContacts(var authHeaders) async {
     print(authKey);
-    var result = await http.get(Uri.parse(apiUrlget), headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'auth-token': authKey.toString(),
-    });
+    var result = await http.get(Uri.parse(apiUrlget), headers: authHeaders);
     setState(() {
       _users = jsonDecode(result.body);
     });
@@ -54,9 +54,17 @@ class _HomePageState extends State<HomePage> {
     return "Contact # " + user['phone_numbers'][0];
   }
 
-  Future<http.Response> deleteContact(String id) {
-    print("Status [Deleted]: [" + id + "]");
-    return http.delete(Uri.parse('https://jwa-phonebook-api.herokuapp.com/contacts/delete/' + id));
+  Future<http.Response> deleteContact(String id) async {
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var authKeyObtained = sharedPreferences.getString('authKey');
+    return http.delete(
+      Uri.parse('http://192.168.1.8:8080/api/posts/delete/' + id),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'auth-token': authKeyObtained.toString(),
+      },
+    );
   }
 
   @override
@@ -92,6 +100,7 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () async {
                           final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                           sharedPreferences.remove('data');
+                          sharedPreferences.remove('authKey');
                           Navigator.pushNamedAndRemoveUntil(context, '/menu', (_) => false);
                         },
                         child: const Text("LOGOUT", style: TextStyle(color: Colors.redAccent)),
@@ -143,6 +152,7 @@ class _HomePageState extends State<HomePage> {
                             String id = _users[index]['_id'].toString();
                             String userDeleted = _users[index]['first_name'].toString();
                             deleteContact(id);
+                            print("Status [Deleted]: [" + id + "]");
                             setState(() {
                               _users.removeAt(index);
                             });
@@ -206,7 +216,7 @@ class _HomePageState extends State<HomePage> {
                                     title: Text(
                                       _name(_users[index]),
                                       style: TextStyle(
-                                        fontSize: 24,
+                                        fontSize: 18,
                                         color: index % 2 == 0 ? Color(0xFF5B3415) : Color(0xFF0C2F5A),
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -249,12 +259,13 @@ class _HomePageState extends State<HomePage> {
                                                                   fontSize: 20)),
                                                           TextButton(
                                                             onPressed: () {
-// Navigator.pushAndRemoveUntil(
-//     context,
-//     MaterialPageRoute(
-//         builder: (context) => UpdateContact(
-//             specificID: _users[index]['_id'].toString())),
-//         (_) => false);
+                                                              Navigator.pushAndRemoveUntil(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder: (context) => UpdateContact(
+                                                                        specificID: _users[index]['_id'].toString()),
+                                                                  ),
+                                                                  (_) => false);
                                                             },
                                                             child: const Text(
                                                               'EDIT',
@@ -336,7 +347,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-//Navigator.push(context, MaterialPageRoute(builder: (context) => CreateNewContact()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => CreateNewContact()));
         },
         child: Icon(
           Icons.add,

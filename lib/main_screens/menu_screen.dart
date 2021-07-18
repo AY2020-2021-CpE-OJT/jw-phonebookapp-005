@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:jw_phonebookapp_005/Main%20Screens/register_screen.dart';
+import 'package:jw_phonebookapp_005/main_screens/register_screen.dart';
 import 'login_screen.dart';
 
 class MainMenu extends StatefulWidget {

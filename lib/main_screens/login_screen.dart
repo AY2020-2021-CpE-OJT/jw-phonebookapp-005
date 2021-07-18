@@ -7,8 +7,6 @@ import 'package:jw_phonebookapp_005/model/login_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'contacts_screen.dart';
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -191,8 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           sharedPreferences.setString('authKey', value.authToken.toString());
                                           globalFormKey.currentState!.reset();
                                           Fluttertoast.showToast(msg: "Login Successful");
-                                          Navigator.pushAndRemoveUntil(
-                                              context, MaterialPageRoute(builder: (context) => HomePage()), (_) => false);
+                                          Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
                                         } else {
                                           showDialog(
                                             context: context,
@@ -260,7 +257,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 TextButton(
                                                     onPressed: () {
                                                       Navigator.of(context).pop();
-
                                                     },
                                                     child:
                                                         const Text("OK", style: TextStyle(color: Color(0xFFFCC13A)))),

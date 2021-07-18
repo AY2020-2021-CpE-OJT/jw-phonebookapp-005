@@ -5,7 +5,6 @@ import 'package:jw_phonebookapp_005/model/login_model.dart';
 
 class APIService {
   var client = http.Client();
-
   Future<LoginResponseModel> login(LoginRequestModel requestModel) async {
     print(requestModel.toJson());
     String email = requestModel.email.toString();
