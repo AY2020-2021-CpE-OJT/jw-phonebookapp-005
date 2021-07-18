@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -14,12 +16,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final String apiUrlget = "https://jwa-phonebook-api.herokuapp.com/contacts";
+  late String authKey = '';
+
+  Future getAuthKeyData() async {
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var authKeyObtained = sharedPreferences.getString('authKey');
+    setState(() {
+      if (authKeyObtained != null) {
+        authKey = authKeyObtained;
+        fetchContacts(authKey);
+      }
+    });
+  }
+
+  final String apiUrlget = "http://192.168.1.8:8080/api/posts";
 
   List<dynamic> _users = [];
 
-  void fetchContacts() async {
-    var result = await http.get(Uri.parse(apiUrlget));
+  void fetchContacts(String authToken) async {
+    print(authKey);
+    var result = await http.get(Uri.parse(apiUrlget), headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'auth-token': authKey.toString(),
+    });
     setState(() {
       _users = jsonDecode(result.body);
     });
@@ -31,7 +51,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   String _phonenum(dynamic user) {
-    return "First Number: " + user['phone_numbers'][0];
+    return "Contact # " + user['phone_numbers'][0];
   }
 
   Future<http.Response> deleteContact(String id) {
@@ -95,80 +115,84 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Container(
-        child: FutureBuilder<List<dynamic>>(
-          builder: (context, snapshot) {
-            return _users.length != 0
-                ? RefreshIndicator(
-              color: Color(0xFFFCC13A),
-                    child: ListView.builder(
-                        padding: EdgeInsets.all(12.0),
-                        itemCount: _users.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Dismissible(
-                            key: Key(_users[index].toString()),
-                            direction: DismissDirection.endToStart,
-                            background: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 14.0),
-                              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-                                Icon(Icons.delete_forever, color: Colors.white70),
-                                Text("Delete",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0, color: Colors.white70))
-                              ]),
-                              decoration: BoxDecoration(
-                                color: Colors.redAccent,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
+      body: FutureBuilder<List<dynamic>>(
+        builder: (context, snapshot) {
+          return _users.length != 0
+              ? RefreshIndicator(
+                  color: Color(0xFFFCC13A),
+                  child: ListView.builder(
+                      padding: EdgeInsets.all(12.0),
+                      itemCount: _users.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Dismissible(
+                          key: Key(_users[index].toString()),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 14.0),
+                            child: Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+                              Icon(Icons.delete_forever, color: Colors.white70),
+                              Text("Delete",
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0, color: Colors.white70))
+                            ]),
+                            decoration: BoxDecoration(
+                              color: Colors.redAccent,
+                              borderRadius: BorderRadius.circular(15),
                             ),
-                            onDismissed: (direction) {
-                              String id = _users[index]['_id'].toString();
-                              String userDeleted = _users[index]['first_name'].toString();
-                              deleteContact(id);
-                              setState(() {
-                                _users.removeAt(index);
-                              });
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('$userDeleted deleted'),
-                                ),
-                              );
-                            },
-                            confirmDismiss: (DismissDirection direction) async {
-                              return await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text("Confirm",
-                                        style: TextStyle(
-                                          color: Color(0xFF5B3415),
-                                          fontWeight: FontWeight.bold,
-                                        )),
-                                    content: const Text("Are you sure you wish to delete this contact?"),
-                                    actions: <Widget>[
-                                      TextButton(
-                                          onPressed: () => Navigator.of(context).pop(true),
-                                          child: const Text("DELETE", style: TextStyle(color: Colors.redAccent))),
-                                      TextButton(
-                                        onPressed: () => Navigator.of(context).pop(false),
-                                        child: const Text("CANCEL", style: TextStyle(color: Color(0xFFFCC13A))),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
+                          ),
+                          onDismissed: (direction) {
+                            String id = _users[index]['_id'].toString();
+                            String userDeleted = _users[index]['first_name'].toString();
+                            deleteContact(id);
+                            setState(() {
+                              _users.removeAt(index);
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('$userDeleted deleted'),
+                              ),
+                            );
+                          },
+                          confirmDismiss: (DismissDirection direction) async {
+                            return await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text("Confirm",
+                                      style: TextStyle(
+                                        color: Color(0xFF5B3415),
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                  content: const Text("Are you sure you wish to delete this contact?"),
+                                  actions: <Widget>[
+                                    TextButton(
+                                        onPressed: () => Navigator.of(context).pop(true),
+                                        child: const Text("DELETE", style: TextStyle(color: Colors.redAccent))),
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(false),
+                                      child: const Text("CANCEL", style: TextStyle(color: Color(0xFFFCC13A))),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: Container(
+                            height: 80,
+                            color: Colors.transparent,
                             child: Card(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15.0),
                               ),
+                              color: index % 2 == 0 ? Color(0xFFfde09c) : Color(0xFFb7d9f3),
                               child: Column(
-                                children: <Widget>[
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
                                   ListTile(
+                                    tileColor: Colors.transparent,
+                                    selectedTileColor: Colors.transparent,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15.0),
                                     ),
-                                    tileColor: index % 2 == 0 ? Color(0x80FCC13A) : Color(0x8070B3E7),
                                     leading: CircleAvatar(
                                       backgroundColor: index % 2 == 0 ? Color(0xBF5B3415) : Color(0x800C2F5A),
                                       radius: 30.0,
@@ -297,18 +321,18 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                             ),
-                          );
-                        }),
-                    onRefresh: _getData,
-                  )
-                : Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFCC13A)),
-                      backgroundColor: Color(0xFF5B3415),
-                    ),
-                  );
-          },
-        ),
+                          ),
+                        );
+                      }),
+                  onRefresh: _getData,
+                )
+              : Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFCC13A)),
+                    backgroundColor: Color(0xFF5B3415),
+                  ),
+                );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -326,12 +350,12 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    fetchContacts();
+    getAuthKeyData();
   }
 
   Future<void> _getData() async {
     setState(() {
-      fetchContacts();
+      getAuthKeyData();
     });
   }
 }
