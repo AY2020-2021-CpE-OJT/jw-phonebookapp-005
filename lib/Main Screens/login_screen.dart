@@ -7,6 +7,8 @@ import 'package:jw_phonebookapp_005/model/login_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'contacts_screen.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -36,6 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     emailFocus.dispose();
     passwordFocus.dispose();
+
     super.dispose();
   }
 
@@ -170,9 +173,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPrimary: Color(0xFFFCC13A), // foreground
                                 ),
                                 onPressed: () async {
+                                  int timeout = 5;
                                   FocusManager.instance.primaryFocus?.unfocus();
                                   final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-                                  sharedPreferences.setString('data', requestModel.toJson().toString());
                                   if (validateAndSave()) {
                                     setState(() {
                                       isApiCallProcess = true;
@@ -184,9 +187,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                           isApiCallProcess = false;
                                         });
                                         if (value.authToken.isNotEmpty) {
+                                          sharedPreferences.setString('data', requestModel.toJson().toString());
+                                          sharedPreferences.setString('authKey', value.authToken.toString());
                                           globalFormKey.currentState!.reset();
                                           Fluttertoast.showToast(msg: "Login Successful");
-                                          Navigator.of(context).pushReplacementNamed('/home');
+                                          Navigator.pushAndRemoveUntil(
+                                              context, MaterialPageRoute(builder: (context) => HomePage()), (_) => false);
                                         } else {
                                           showDialog(
                                             context: context,
@@ -220,6 +226,48 @@ class _LoginScreenState extends State<LoginScreen> {
                                             },
                                           );
                                         }
+                                      },
+                                    ).timeout(
+                                      Duration(seconds: timeout),
+                                      onTimeout: () {
+                                        globalFormKey.currentState!.reset();
+                                        sharedPreferences.remove('data');
+                                        sharedPreferences.remove('authKey');
+                                        setState(() {
+                                          isApiCallProcess = false;
+                                        });
+                                        return showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return new AlertDialog(
+                                              title: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.error,
+                                                    color: Colors.redAccent,
+                                                  ),
+                                                  Text(
+                                                    "  Unexpected Error",
+                                                    style: TextStyle(
+                                                      color: Color(0xFF5B3415),
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              content: new Text('Connection Timeout: @_@'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop();
+
+                                                    },
+                                                    child:
+                                                        const Text("OK", style: TextStyle(color: Color(0xFFFCC13A)))),
+                                              ],
+                                            );
+                                          },
+                                        );
                                       },
                                     );
                                   }
