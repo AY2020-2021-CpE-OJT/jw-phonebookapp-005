@@ -17,7 +17,7 @@ class ContactDataUpdate {
 Future<SpecificContact> fetchSpecificContact(String id) async {
   final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   var authKeyObtained = sharedPreferences.getString('authKey');
-  final response = await http.get(Uri.parse('http://192.168.1.8:8080/api/posts/get/' + id),
+  final response = await http.get(Uri.parse('https://jwa-crud-api.herokuapp.com/api/posts/get/' + id),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Accept': 'application/json',

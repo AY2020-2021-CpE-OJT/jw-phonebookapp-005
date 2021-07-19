@@ -47,6 +47,7 @@ flutter_native_splash:
   image: "assets/icon/pb-logo-splash.png"
   android: true
   ios: true
+  web: true
 
 flutter_launcher_name:
   name: "Phonebook"
@@ -57,6 +58,7 @@ flutter_icons:
   adaptive_icon_foreground: "assets/icon/pb-logo-fg.png"
   android: true
   ios: true
+  web: true
 
 # The following section is specific to Flutter.
 flutter:

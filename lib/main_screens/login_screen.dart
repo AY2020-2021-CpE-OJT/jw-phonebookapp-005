@@ -195,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPrimary: Color(0xFFFCC13A), // foreground
                                 ),
                                 onPressed: () async {
-                                  int timeout = 5;
+                                  int timeout = 60;
                                   FocusManager.instance.primaryFocus?.unfocus();
                                   final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                                   if (validateAndSave()) {
