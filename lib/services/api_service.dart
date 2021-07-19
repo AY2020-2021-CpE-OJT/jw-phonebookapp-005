@@ -10,7 +10,7 @@ class APIService {
     String email = requestModel.email.toString();
     String password = requestModel.password.toString();
     final response = await client
-        .post(Uri.parse('http://192.168.1.8:8080/api/user/login'),
+        .post(Uri.parse('https://jwa-crud-api.herokuapp.com/api/user/login'),
             headers: <String, String>{
               "Accept": "application/json",
               'Content-Type': 'application/json; charset=UTF-8',

@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  final String apiUrlget = "http://192.168.1.8:8080/api/posts";
+  final String apiUrlget = "https://jwa-crud-api.herokuapp.com/api/posts";
 
   List<dynamic> _users = [];
 
@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var authKeyObtained = sharedPreferences.getString('authKey');
     return http.delete(
-      Uri.parse('http://192.168.1.8:8080/api/posts/delete/' + id),
+      Uri.parse('https://jwa-crud-api.herokuapp.com/api/posts/delete/' + id),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Accept': 'application/json',

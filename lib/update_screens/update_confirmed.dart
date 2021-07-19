@@ -18,7 +18,7 @@ class UpdateScreen extends StatelessWidget {
       final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
       var authKeyObtained = sharedPreferences.getString('authKey');
       return http.patch(
-        Uri.parse('http://192.168.1.8:8080/api/posts/update/' + specificID),
+        Uri.parse('https://jwa-crud-api.herokuapp.com/api/posts/update/' + specificID),
         headers: <String, String>{
           'Content-Type': 'application/json ;charset=UTF-8',
           'Accept': 'application/json',
