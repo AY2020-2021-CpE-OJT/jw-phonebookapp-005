@@ -117,6 +117,7 @@ class _HomePageState extends State<HomePage> {
                             final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                             sharedPreferences.remove('data');
                             sharedPreferences.remove('authKey');
+                            Fluttertoast.showToast(msg: "Logged out Successfully");
                             Navigator.pushNamedAndRemoveUntil(context, '/menu', (_) => false);
                           },
                           child: const Text("LOGOUT", style: TextStyle(color: Colors.redAccent)),

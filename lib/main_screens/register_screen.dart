@@ -1,7 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jw_phonebookapp_005/main_screens/menu_screen.dart';
+import 'package:jw_phonebookapp_005/model/login_model.dart';
+import 'package:jw_phonebookapp_005/services/ProgressHUD.dart';
+import 'package:jw_phonebookapp_005/services/api_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -18,12 +22,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   FocusNode emailFocus = new FocusNode();
   FocusNode passwordFocus = new FocusNode();
 
+  late RegisterRequestModel regRequestModel;
+  bool isApiCallProcess = false;
+
   @override
   void initState() {
     super.initState();
     nameFocus = FocusNode();
     emailFocus = FocusNode();
     passwordFocus = FocusNode();
+    regRequestModel = new RegisterRequestModel(name: '', email: '', password: '');
   }
 
   @override
@@ -36,6 +44,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return ProgressHUD(
+      child: buildUIRegister(context),
+      inAsyncCall: isApiCallProcess,
+      opacity: 0.3,
+    );
+  }
+
+  Widget buildUIRegister(BuildContext context) {
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: GestureDetector(
@@ -86,7 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 keyboardType: TextInputType.name,
                                 textInputAction: TextInputAction.next,
                                 textCapitalization: TextCapitalization.sentences,
-                                //onSved:,
+                                onSaved: (input) => regRequestModel.name = input!,
                                 validator: (input) => input!.length < 6 ? "Name is less than 6 characters" : null,
                                 decoration: new InputDecoration(
                                   //hintText: "Email Address",
@@ -101,7 +117,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       color: Theme.of(context).primaryColor,
                                     ),
                                   ),
-                                  labelText: 'Name',
+                                  labelText: 'Username',
                                   labelStyle: TextStyle(
                                     color: nameFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
                                   ),
@@ -116,7 +132,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 onTap: _requestFocusEmail,
                                 keyboardType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.next,
-                                //onSved:,
+                                onSaved: (input) => regRequestModel.email = input!,
                                 validator: (input) => !input!.contains("@") ? "Email Address invalid" : null,
                                 decoration: new InputDecoration(
                                   //hintText: "Email Address",
@@ -145,7 +161,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 focusNode: passwordFocus,
                                 onTap: _requestFocusPassword,
                                 keyboardType: TextInputType.text,
-                                //onSved:,
+                                onSaved: (input) => regRequestModel.password = input!,
                                 validator: (input) => input!.length < 3 ? "Password is less than 6 characters" : null,
                                 obscureText: hidePassword,
                                 decoration: new InputDecoration(
@@ -189,7 +205,129 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     primary: Color(0xFF5B3415), // background
                                     onPrimary: Color(0xFFFCC13A), // foreground
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    int timeout = 60;
+                                    FocusManager.instance.primaryFocus?.unfocus();
+                                    if (validateAndSave()) {
+                                      setState(() {
+                                        isApiCallProcess = true;
+                                      });
+                                      RegisterService apiService = new RegisterService();
+                                      apiService.login(regRequestModel).then(
+                                            (value) {
+                                          setState(() {
+                                            isApiCallProcess = false;
+                                          });
+                                          if (value.message.isNotEmpty) {
+                                            globalFormKey.currentState!.reset();
+                                            return showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return new AlertDialog(
+                                                  title: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.error,
+                                                        color: Color(0xFFFCC13A),
+                                                      ),
+                                                      Text(
+                                                        "  Registered",
+                                                        style: TextStyle(
+                                                          color: Color(0xFF5B3415),
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  content: new Text(value.message),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop();
+                                                          Navigator.pushNamedAndRemoveUntil(context, '/menu', (_) => false);
+                                                        },
+                                                        child:
+                                                        const Text("OK", style: TextStyle(color: Color(0xFFFCC13A)))),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          } else {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return new AlertDialog(
+                                                  title: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.error,
+                                                        color: Colors.redAccent,
+                                                      ),
+                                                      Text(
+                                                        "  Register",
+                                                        style: TextStyle(
+                                                          color: Color(0xFF5B3415),
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  content: new Text(value.error),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                        child:
+                                                        const Text("OK", style: TextStyle(color: Color(0xFFFCC13A)))),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
+                                      ).timeout(
+                                        Duration(seconds: timeout),
+                                        onTimeout: () {
+                                          globalFormKey.currentState!.reset();
+                                          setState(() {
+                                            isApiCallProcess = false;
+                                          });
+                                          return showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return new AlertDialog(
+                                                title: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.error,
+                                                      color: Colors.redAccent,
+                                                    ),
+                                                    Text(
+                                                      "  Unexpected Error",
+                                                      style: TextStyle(
+                                                        color: Color(0xFF5B3415),
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                content: new Text('Connection Timeout: @_@'),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child:
+                                                      const Text("OK", style: TextStyle(color: Color(0xFFFCC13A)))),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                      );
+                                    }
+                                  },
                                   child: Text(
                                     "Register",
                                     style: TextStyle(fontSize: 18),
@@ -228,7 +366,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
       FocusScope.of(context).requestFocus(passwordFocus);
     });
   }
-
+  bool validateAndSave() {
+    final form = globalFormKey.currentState;
+    if (form!.validate()) {
+      form.save();
+      return true;
+    } else {
+      return false;
+    }
+  }
   Future<bool> _onBackPressed() {
     showDialog(
       context: context,
