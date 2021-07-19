@@ -124,6 +124,8 @@ class _UpdateContactState extends State<UpdateContact> {
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
+        backgroundColor: Color(0xFFF6EDE7),
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           centerTitle: true,
           title: Text("Update Contact", style: TextStyle(color: Color(0xFF5B3415))),
@@ -150,7 +152,19 @@ class _UpdateContactState extends State<UpdateContact> {
           behavior: HitTestBehavior.opaque,
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Container(
-            padding: const EdgeInsets.all(20.0),
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+            margin: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                    color: Theme.of(context).hintColor.withOpacity(0.2),
+                    offset: Offset(0, 10),
+                    blurRadius: 20),
+              ],
+            ),
             child: FutureBuilder<SpecificContact>(
               future: futureSpecificContact,
               builder: (context, snapshot) {

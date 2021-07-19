@@ -102,10 +102,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 keyboardType: TextInputType.name,
                                 textInputAction: TextInputAction.next,
                                 textCapitalization: TextCapitalization.sentences,
+                                inputFormatters:[
+                                  LengthLimitingTextInputFormatter(34),
+                                ],
                                 onSaved: (input) => regRequestModel.name = input!,
                                 validator: (input) => input!.length < 6 ? "Name is less than 6 characters" : null,
                                 decoration: new InputDecoration(
-                                  //hintText: "Email Address",
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Theme.of(context).primaryColor.withOpacity(0.2),
@@ -117,6 +119,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       color: Theme.of(context).primaryColor,
                                     ),
                                   ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.redAccent,
+                                    ),
+                                  ),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.redAccent,
+                                    ),
+                                  ),
+                                  contentPadding:
+                                  EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
                                   labelText: 'Username',
                                   labelStyle: TextStyle(
                                     color: nameFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
@@ -135,7 +149,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 onSaved: (input) => regRequestModel.email = input!,
                                 validator: (input) => !input!.contains("@") ? "Email Address invalid" : null,
                                 decoration: new InputDecoration(
-                                  //hintText: "Email Address",
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Theme.of(context).primaryColor.withOpacity(0.2),
@@ -147,6 +160,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       color: Theme.of(context).primaryColor,
                                     ),
                                   ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.redAccent,
+                                    ),
+                                  ),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.redAccent,
+                                    ),
+                                  ),
+                                  contentPadding:
+                                  EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
                                   labelText: 'Email Address',
                                   labelStyle: TextStyle(
                                     color: emailFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
@@ -176,6 +201,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         color: Theme.of(context).primaryColor,
                                       ),
                                     ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.redAccent,
+                                      ),
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.redAccent,
+                                      ),
+                                    ),
+                                    contentPadding:
+                                    EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
                                     labelText: 'Password',
                                     labelStyle: TextStyle(
                                       color: passwordFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
@@ -207,6 +244,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                   onPressed: () {
                                     int timeout = 60;
+                                    int alertTime = 3;
                                     FocusManager.instance.primaryFocus?.unfocus();
                                     if (validateAndSave()) {
                                       setState(() {
@@ -222,6 +260,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             globalFormKey.currentState!.reset();
                                             return showDialog(
                                               context: context,
+                                              barrierDismissible: false,
                                               builder: (BuildContext context) {
                                                 return new AlertDialog(
                                                   title: Row(
@@ -250,6 +289,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                         const Text("OK", style: TextStyle(color: Color(0xFFFCC13A)))),
                                                   ],
                                                 );
+                                              },
+                                            ).timeout(
+                                              Duration(seconds: alertTime),
+                                              onTimeout: () {
+                                                Navigator.of(context).pop();
+                                                Navigator.pushNamedAndRemoveUntil(context, '/menu', (_) => false);
                                               },
                                             );
                                           } else {

@@ -211,6 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         if (value.authToken.isNotEmpty) {
                                           sharedPreferences.setString('data', requestModel.toJson().toString());
                                           sharedPreferences.setString('authKey', value.authToken.toString());
+                                          sharedPreferences.setString('currentUser',value.message.toString());
                                           globalFormKey.currentState!.reset();
                                           Fluttertoast.showToast(msg: "Login Successful");
                                           Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);

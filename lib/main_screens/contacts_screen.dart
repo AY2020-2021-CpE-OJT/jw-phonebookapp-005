@@ -15,10 +15,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late String authKey = '';
   var authHeaders;
+  var currentUser;
 
   Future getAuthKeyData() async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var authKeyObtained = sharedPreferences.getString('authKey');
+    currentUser = sharedPreferences.getString('currentUser');
     setState(
       () {
         if (authKeyObtained != null) {
@@ -72,20 +74,21 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     DateTime? lastPressed;
     return WillPopScope(
-        onWillPop: () async {
-          final now = DateTime.now();
-          final maxDuration = Duration(seconds: 1);
-          final isWarning = lastPressed == null || now.difference(lastPressed!) > maxDuration;
-          if (isWarning) {
-            lastPressed = DateTime.now();
-            Fluttertoast.showToast(msg: "Tap Again to Close App", toastLength: Toast.LENGTH_SHORT);
-            return false;
-          } else {
-            Fluttertoast.cancel();
-            return true;
-          }
-        },
+      onWillPop: () async {
+        final now = DateTime.now();
+        final maxDuration = Duration(seconds: 1);
+        final isWarning = lastPressed == null || now.difference(lastPressed!) > maxDuration;
+        if (isWarning) {
+          lastPressed = DateTime.now();
+          Fluttertoast.showToast(msg: "Double Tap to Close App", toastLength: Toast.LENGTH_SHORT);
+          return false;
+        } else {
+          Fluttertoast.cancel();
+          return true;
+        }
+      },
       child: Scaffold(
+        backgroundColor: Color(0xFFF6EDE7),
         appBar: AppBar(
           centerTitle: true,
           title: Text("Contacts", style: TextStyle(color: Color(0xFF5B3415))),
@@ -95,50 +98,49 @@ class _HomePageState extends State<HomePage> {
             width: 80.0,
           ),
           actions: [
-            IconButton(
-              icon: Icon(
-                Icons.logout,
-                color: Color(0x805B3415),
-              ),
-              onPressed: () async {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return new AlertDialog(
-                      title: const Text("Logout",
+            Theme(
+              data: Theme.of(context).copyWith(dividerColor: Theme.of(context).primaryColor),
+              child: PopupMenuButton<int>(
+                itemBuilder: (context) => [
+                  PopupMenuItem<int>(
+                    value: 0,
+                    child: Text('Account'),
+                  ),
+                  PopupMenuItem<int>(
+                    value: 1,
+                    child: Text('About'),
+                  ),
+                  PopupMenuItem<int>(
+                    enabled: false,
+                    child: new Container( width: 100,child: Text('App ver.x.x')),
+                  ),
+                  PopupMenuDivider(),
+                  PopupMenuItem<int>(
+                    value: 2,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.logout,
+                          color: Colors.redAccent,
+                        ),
+                        const SizedBox(
+                          width: 7,
+                        ),
+                        Text(
+                          "Logout",
                           style: TextStyle(
-                            color: Color(0xFF5B3415),
                             fontWeight: FontWeight.bold,
-                          )),
-                      content: const Text("Are you sure to Logout?"),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () async {
-                            final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-                            sharedPreferences.remove('data');
-                            sharedPreferences.remove('authKey');
-                            Fluttertoast.showToast(msg: "Logged out Successfully");
-                            Navigator.pushNamedAndRemoveUntil(context, '/menu', (_) => false);
-                          },
-                          child: const Text("LOGOUT", style: TextStyle(color: Colors.redAccent)),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(false);
-                          },
-                          child: const Text(
-                            "CANCEL",
-                            style: TextStyle(
-                              color: Color(0xFFFCC13A),
-                            ),
+                            color: Colors.redAccent,
                           ),
-                        ),
+                        )
                       ],
-                    );
-                  },
-                );
-              },
-            ),
+                    ),
+                  ),
+
+                ],
+                onSelected: (item) => SelectedItem(context, item),
+              ),
+            )
           ],
         ),
         body: FutureBuilder<List<dynamic>>(
@@ -158,7 +160,8 @@ class _HomePageState extends State<HomePage> {
                               child: Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
                                 Icon(Icons.delete_forever, color: Colors.white70),
                                 Text("Delete",
-                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0, color: Colors.white70))
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0, color: Colors.white70))
                               ]),
                               decoration: BoxDecoration(
                                 color: Colors.redAccent,
@@ -210,7 +213,7 @@ class _HomePageState extends State<HomePage> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15.0),
                                 ),
-                                color: index % 2 == 0 ? Color(0xFFfde09c) : Color(0xFFb7d9f3),
+                                color: index % 2 == 0 ? Color(0xfffde09c) : Color(0xFFb7d9f3),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -226,7 +229,7 @@ class _HomePageState extends State<HomePage> {
                                         child: Text(_users[index]['first_name'][0] + _users[index]['last_name'][0],
                                             style: TextStyle(
                                                 fontSize: 20,
-                                                color: index % 2 == 0 ? Color(0xFFFCC13A) : Color(0xFFFFFFFF),
+                                                color: index % 2 == 0 ? Color(0xFFfde09c) : Color(0xFFb7d9f3),
                                                 fontWeight: FontWeight.bold)),
                                       ),
                                       trailing: Icon(Icons.arrow_back_ios),
@@ -312,7 +315,8 @@ class _HomePageState extends State<HomePage> {
                                                                       'Phone #' +
                                                                           listNumbers[iter].toString() +
                                                                           ':\t\t' +
-                                                                          _users[index]['phone_numbers'][iter].toString(),
+                                                                          _users[index]['phone_numbers'][iter]
+                                                                              .toString(),
                                                                       style: TextStyle(
                                                                           color: Color(0xFF5B3415), fontSize: 14),
                                                                     ),
@@ -387,5 +391,55 @@ class _HomePageState extends State<HomePage> {
       Fluttertoast.showToast(msg: "All Contacts fetched");
       getAuthKeyData();
     });
+  }
+
+  SelectedItem(BuildContext context, Object? item) {
+    switch (item) {
+      case 0:
+        print("Account is Pressed");
+        break;
+      case 1:
+        print("About is Pressed");
+        break;
+      case 2:
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return new AlertDialog(
+              title: const Text("Logout",
+                  style: TextStyle(
+                    color: Color(0xFF5B3415),
+                    fontWeight: FontWeight.bold,
+                  )),
+              content: const Text("Are you sure to Logout?"),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () async {
+                    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                    sharedPreferences.remove('data');
+                    sharedPreferences.remove('authKey');
+                    sharedPreferences.remove('currentUser');
+                    Fluttertoast.showToast(msg: "Logged out Successfully");
+                    Navigator.pushNamedAndRemoveUntil(context, '/menu', (_) => false);
+                  },
+                  child: const Text("LOGOUT", style: TextStyle(color: Colors.redAccent)),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                  child: const Text(
+                    "CANCEL",
+                    style: TextStyle(
+                      color: Color(0xFFFCC13A),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+        break;
+    }
   }
 }
