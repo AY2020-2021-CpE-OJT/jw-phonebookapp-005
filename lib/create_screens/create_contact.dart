@@ -26,12 +26,10 @@ class _CreateNewContactState extends State<CreateNewContact> {
   final fnameController = TextEditingController();
   final lnameController = TextEditingController();
 
-  List<TextEditingController> pnumControllers = <TextEditingController>[
-    TextEditingController()
-  ];
+  List<TextEditingController> pnumControllers = <TextEditingController>[TextEditingController()];
 
-  final FocusNode fnameFocus = FocusNode();
-  final FocusNode lnameFocus = FocusNode();
+  FocusNode fnameFocus = FocusNode();
+  FocusNode lnameFocus = FocusNode();
 
   List<ContactData> contactsAppend = <ContactData>[];
 
@@ -51,10 +49,15 @@ class _CreateNewContactState extends State<CreateNewContact> {
   void initState() {
     super.initState();
     _count = 1;
+    fnameFocus = FocusNode();
+    lnameFocus = FocusNode();
   }
 
   @override
   void dispose() {
+    fnameFocus.dispose();
+    lnameFocus.dispose();
+
     fnameController.dispose();
     lnameController.dispose();
     for (int i = 0; i < _count; i++) {
@@ -81,9 +84,7 @@ class _CreateNewContactState extends State<CreateNewContact> {
                 fnameController.clear();
                 lnameController.clear();
                 pnumControllers.clear();
-                pnumControllers = <TextEditingController>[
-                  TextEditingController()
-                ];
+                pnumControllers = <TextEditingController>[TextEditingController()];
               });
             },
           )
@@ -96,36 +97,58 @@ class _CreateNewContactState extends State<CreateNewContact> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "New Contact",
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF5B3415)),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
               TextFormField(
                 controller: fnameController,
                 textInputAction: TextInputAction.next,
                 textCapitalization: TextCapitalization.sentences,
                 focusNode: fnameFocus,
+                onTap: _requestFocusFname,
                 onFieldSubmitted: (term) {
                   _fieldFocusChange(context, fnameFocus, lnameFocus);
                 },
                 decoration: new InputDecoration(
-                  border: InputBorder.none,
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0xFF5B3415),
-                    ),
-                  ),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Color(0xFFFCC13A),
+                      color: Theme.of(context).primaryColor.withOpacity(0.2),
                     ),
                   ),
-                  //errorBorder: InputBorder.none,
                   disabledBorder: InputBorder.none,
-                  contentPadding:
-                  EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
                   labelText: 'First name',
-                  prefixIcon: Icon(Icons.account_box_rounded),
+                  labelStyle: TextStyle(
+                    color: fnameFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
+                  ),
+                  prefixIcon: Icon(Icons.account_box_rounded, color: Theme.of(context).primaryColor),
                   suffixIcon: IconButton(
                     onPressed: fnameController.clear,
-                    icon: Icon(Icons.cancel,
-                        color: Color(0x33808080)),
+                    icon: Icon(Icons.cancel, color: Theme.of(context).primaryColor.withOpacity(0.4)),
                   ),
                 ),
               ),
@@ -135,34 +158,43 @@ class _CreateNewContactState extends State<CreateNewContact> {
                 textInputAction: TextInputAction.done,
                 textCapitalization: TextCapitalization.sentences,
                 focusNode: lnameFocus,
+                onTap: _requestFocusLname,
                 decoration: new InputDecoration(
-                  border: InputBorder.none,
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0xFF5B3415),
-                    ),
-                  ),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Color(0xFFFCC13A),
+                      color: Theme.of(context).primaryColor.withOpacity(0.2),
                     ),
                   ),
-                  //errorBorder: InputBorder.none,
                   disabledBorder: InputBorder.none,
-                  contentPadding:
-                  EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
                   labelText: 'Last Name',
-                  prefixIcon: Icon(Icons.account_box_rounded),
+                  labelStyle: TextStyle(
+                    color: lnameFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
+                  ),
+                  prefixIcon: Icon(Icons.account_box_rounded, color: Theme.of(context).primaryColor),
                   suffixIcon: IconButton(
                     onPressed: lnameController.clear,
-                    icon: Icon(Icons.cancel,
-                        color: Color(0x33808080)),
+                    icon: Icon(Icons.cancel, color: Theme.of(context).primaryColor.withOpacity(0.4)),
                   ),
                 ),
               ),
               SizedBox(height: 20),
-              Text("Contact Number/s: $listNumber",
-                  style: TextStyle(color: Color(0xFF5B3415))),
+              Text("Contact Number/s: $listNumber", style: TextStyle(color: Color(0xFF5B3415))),
               SizedBox(height: 20),
               Flexible(
                 child: ListView.builder(
@@ -190,20 +222,16 @@ class _CreateNewContactState extends State<CreateNewContact> {
                               onPressed: () {
                                 Navigator.of(context).pop(false);
                               },
-                              child: const Text("CANCEL",
-                                  style: TextStyle(color: Colors.redAccent))),
+                              child: const Text("CANCEL", style: TextStyle(color: Colors.redAccent))),
                           TextButton(
                             onPressed: () {
                               saveContact();
                               Navigator.pushAndRemoveUntil(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          CreateConfirmed(todo: contactsAppend)),
-                                      (_) => false);
+                                  MaterialPageRoute(builder: (context) => CreateConfirmed(todo: contactsAppend)),
+                                  (_) => false);
                             },
-                            child: const Text("CONFIRM",
-                                style: TextStyle(color: Color(0xFFFCC13A))),
+                            child: const Text("CONFIRM", style: TextStyle(color: Color(0xFFFCC13A))),
                           ),
                         ],
                       );
@@ -231,32 +259,47 @@ class _CreateNewContactState extends State<CreateNewContact> {
             onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
             controller: pnumControllers[key],
             textCapitalization: TextCapitalization.sentences,
+            onTap: () {
+              setState(() {
+                lnameFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey;
+                fnameFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey;
+              });
+            },
             maxLength: 13,
             keyboardType: TextInputType.phone,
             textInputAction: TextInputAction.done,
             decoration: new InputDecoration(
-              border: InputBorder.none,
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Color(0xFF5B3415),
-                ),
-              ),
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: Color(0xFFFCC13A),
+                  color: Theme.of(context).primaryColor.withOpacity(0.2),
                 ),
               ),
-              // errorBorder: InputBorder.none,
               disabledBorder: InputBorder.none,
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.redAccent,
+                ),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.redAccent,
+                ),
+              ),
               errorText: isANumber ? null : "Please enter a number",
-              contentPadding:
-              EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
+              contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
               labelText: 'Phone number',
-              prefixIcon: Icon(Icons.phone_android_rounded),
+              labelStyle: TextStyle(
+                color: Colors.grey,
+              ),
+              prefixIcon: Icon(Icons.phone_android_rounded, color: Theme.of(context).primaryColor),
               suffixIcon: IconButton(
                 onPressed: pnumControllers[key].clear,
-                icon: Icon(Icons.cancel,
-                    color: Color(0x33808080)),
+                icon: Icon(Icons.cancel, color: Theme.of(context).primaryColor.withOpacity(0.4)),
               ),
             ),
           ),
@@ -314,11 +357,21 @@ class _CreateNewContactState extends State<CreateNewContact> {
       ),
     );
   }
+
+  void _requestFocusFname() {
+    setState(() {
+      FocusScope.of(context).requestFocus(fnameFocus);
+    });
+  }
+
+  void _requestFocusLname() {
+    setState(() {
+      FocusScope.of(context).requestFocus(lnameFocus);
+    });
+  }
 }
 
-_fieldFocusChange(
-    BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
+_fieldFocusChange(BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
   currentFocus.unfocus();
   FocusScope.of(context).requestFocus(nextFocus);
 }
-

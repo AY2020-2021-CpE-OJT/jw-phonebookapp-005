@@ -111,6 +111,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: Theme.of(context).primaryColor,
                                   ),
                                 ),
+                                errorBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.redAccent,
+                                  ),
+                                ),
+                                focusedErrorBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.redAccent,
+                                  ),
+                                ),
+                                contentPadding:
+                                EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
                                 labelText: 'Email Address',
                                 labelStyle: TextStyle(
                                   color: emailFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
@@ -140,6 +152,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: Theme.of(context).primaryColor,
                                   ),
                                 ),
+                                errorBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.redAccent,
+                                  ),
+                                ),
+                                focusedErrorBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.redAccent,
+                                  ),
+                                ),
+                                contentPadding:
+                                EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
                                 labelText: 'Password',
                                 labelStyle: TextStyle(
                                   color: passwordFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
