@@ -13,7 +13,6 @@ class UpdateScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     Future<http.Response> createAlbum(String fname, String lname, List pnums) async {
       final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
       var authKeyObtained = sharedPreferences.getString('authKey');
@@ -39,6 +38,7 @@ class UpdateScreen extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
+        backgroundColor: Color(0xFFF6EDE7),
         appBar: AppBar(
           title: Center(child: Text('Contact Summary')),
         ),
@@ -47,17 +47,32 @@ class UpdateScreen extends StatelessWidget {
           itemBuilder: (context, index) {
             createAlbum(todo[index].firstName, todo[index].lastName, todo[index].phoneNumbers);
             return Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+              margin: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(color: Theme.of(context).hintColor.withOpacity(0.2), offset: Offset(0, 10), blurRadius: 20),
+                ],
+              ),
               child: Column(
                 children: <Widget>[
                   SizedBox(
-                    height: 40,
+                    height: 10,
                   ),
                   Text('Successfully Updated',
+                      textAlign: TextAlign.center,
                       style: TextStyle(color: Color(0xFF3ED933), fontWeight: FontWeight.bold, fontSize: 35)),
                   SizedBox(
-                    height: 40,
+                    height: 10,
                   ),
-                  Row(
+                  Divider(color: Color(0xFF5B3415)),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text('First Name: ',
@@ -70,7 +85,7 @@ class UpdateScreen extends StatelessWidget {
                   SizedBox(
                     height: 10,
                   ),
-                  Row(
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text('Last Name: ',
@@ -81,7 +96,11 @@ class UpdateScreen extends StatelessWidget {
                     ],
                   ),
                   SizedBox(
-                    height: 20,
+                    height: 10,
+                  ),
+                  Divider(color: Color(0xFF5B3415)),
+                  SizedBox(
+                    height: 10,
                   ),
                   Text('Contact Numbers/s:  ',
                       style: TextStyle(color: Color(0xFF5B3415), fontSize: 24, fontWeight: FontWeight.bold),
@@ -90,7 +109,7 @@ class UpdateScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: List.generate(
                       listNumbers.length,
-                          (index) {
+                      (index) {
                         return Container(
                           child: Column(
                             children: [
@@ -112,6 +131,9 @@ class UpdateScreen extends StatelessWidget {
                         );
                       },
                     ),
+                  ),
+                  SizedBox(
+                    height: 10,
                   ),
                 ],
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'create_confirmed.dart';
 
@@ -103,10 +104,7 @@ class _CreateNewContactState extends State<CreateNewContact> {
             borderRadius: BorderRadius.circular(20),
             color: Colors.white,
             boxShadow: [
-              BoxShadow(
-                  color: Theme.of(context).hintColor.withOpacity(0.2),
-                  offset: Offset(0, 10),
-                  blurRadius: 20),
+              BoxShadow(color: Theme.of(context).hintColor.withOpacity(0.2), offset: Offset(0, 10), blurRadius: 20),
             ],
           ),
           child: Column(
@@ -125,6 +123,9 @@ class _CreateNewContactState extends State<CreateNewContact> {
               ),
               TextFormField(
                 controller: fnameController,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(21),
+                ],
                 textInputAction: TextInputAction.next,
                 textCapitalization: TextCapitalization.sentences,
                 focusNode: fnameFocus,
@@ -169,6 +170,9 @@ class _CreateNewContactState extends State<CreateNewContact> {
               SizedBox(height: 10),
               TextFormField(
                 controller: lnameController,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(21),
+                ],
                 textInputAction: TextInputAction.done,
                 textCapitalization: TextCapitalization.sentences,
                 focusNode: lnameFocus,

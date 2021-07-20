@@ -17,12 +17,12 @@ class ContactDataUpdate {
 Future<SpecificContact> fetchSpecificContact(String id) async {
   final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   var authKeyObtained = sharedPreferences.getString('authKey');
-  final response = await http.get(Uri.parse('https://jwa-crud-api.herokuapp.com/api/posts/get/' + id),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'auth-token': authKeyObtained.toString(),
-      });
+  final response =
+      await http.get(Uri.parse('https://jwa-crud-api.herokuapp.com/api/posts/get/' + id), headers: <String, String>{
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'auth-token': authKeyObtained.toString(),
+  });
   print('Status [Success]: Got the ID [$id]');
   if (response.statusCode == 200) {
     print('Status [Success]: Specific Data Appended');
@@ -159,10 +159,7 @@ class _UpdateContactState extends State<UpdateContact> {
               borderRadius: BorderRadius.circular(20),
               color: Colors.white,
               boxShadow: [
-                BoxShadow(
-                    color: Theme.of(context).hintColor.withOpacity(0.2),
-                    offset: Offset(0, 10),
-                    blurRadius: 20),
+                BoxShadow(color: Theme.of(context).hintColor.withOpacity(0.2), offset: Offset(0, 10), blurRadius: 20),
               ],
             ),
             child: FutureBuilder<SpecificContact>(

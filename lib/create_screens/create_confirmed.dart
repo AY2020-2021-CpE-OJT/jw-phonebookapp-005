@@ -38,6 +38,7 @@ class CreateConfirmed extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
+        backgroundColor: Color(0xFFF6EDE7),
         appBar: AppBar(
           title: Center(child: Text('Contact Summary')),
         ),
@@ -46,18 +47,31 @@ class CreateConfirmed extends StatelessWidget {
           itemBuilder: (context, index) {
             createContact(todo[index].firstName, todo[index].lastName, todo[index].phoneNumbers);
             return Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+              margin: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(color: Theme.of(context).hintColor.withOpacity(0.2), offset: Offset(0, 10), blurRadius: 20),
+                ],
+              ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  SizedBox(
-                    height: 40,
-                  ),
+
                   Text('Successfully Created',
+                      textAlign: TextAlign.center,
                       style: TextStyle(color: Color(0xFF3ED933), fontWeight: FontWeight.bold, fontSize: 35)),
                   SizedBox(
-                    height: 40,
+                    height: 10,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Divider(color: Color(0xFF5B3415)),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Column(
                     children: [
                       Text('First Name: ',
                           style: TextStyle(color: Color(0xFF5B3415), fontSize: 24, fontWeight: FontWeight.bold),
@@ -69,8 +83,7 @@ class CreateConfirmed extends StatelessWidget {
                   SizedBox(
                     height: 10,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Column(
                     children: [
                       Text('Last Name: ',
                           style: TextStyle(color: Color(0xFF5B3415), fontSize: 24, fontWeight: FontWeight.bold),
@@ -80,13 +93,17 @@ class CreateConfirmed extends StatelessWidget {
                     ],
                   ),
                   SizedBox(
-                    height: 20,
+                    height: 10,
+                  ),
+                  Divider(color: Color(0xFF5B3415)),
+                  SizedBox(
+                    height: 10,
                   ),
                   Text('Contact Numbers/s:  ',
                       style: TextStyle(color: Color(0xFF5B3415), fontSize: 24, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
                       listNumbers.length,
                       (index) {
@@ -111,6 +128,9 @@ class CreateConfirmed extends StatelessWidget {
                         );
                       },
                     ),
+                  ),
+                  SizedBox(
+                    height: 10,
                   ),
                 ],
               ),
