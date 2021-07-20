@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -52,6 +54,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget buildUIRegister(BuildContext context) {
+    Timer _timer;
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: GestureDetector(
@@ -242,6 +245,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   onPressed: () {
                                     int timeout = 60;
                                     int alertTime = 3;
+                                    _timer = Timer(Duration(seconds: 30), () {
+                                      setState(
+                                            () {
+                                          isApiCallProcess = false;
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return new AlertDialog(
+                                                title: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.error,
+                                                      color: Colors.redAccent,
+                                                    ),
+                                                    Text(
+                                                      "  Unexpected Error",
+                                                      style: TextStyle(
+                                                        color: Color(0xFF5B3415),
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                content: Text(
+                                                    'Connection Timeout [@_@]: Check your Internet Connection',
+                                                    textAlign: TextAlign.left),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child: const Text("OK",
+                                                          style: TextStyle(color: Color(0xFFFCC13A)))),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                      );
+                                    });
                                     FocusManager.instance.primaryFocus?.unfocus();
                                     if (validateAndSave()) {
                                       setState(() {
@@ -296,6 +339,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                               },
                                             );
                                           } else {
+                                            _timer.cancel();
                                             showDialog(
                                               context: context,
                                               builder: (BuildContext context) {
@@ -328,45 +372,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                               },
                                             );
                                           }
-                                        },
-                                      ).timeout(
-                                        Duration(seconds: timeout),
-                                        onTimeout: () {
-                                          globalFormKey.currentState!.reset();
-                                          setState(() {
-                                            isApiCallProcess = false;
-                                          });
-                                          return showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return new AlertDialog(
-                                                title: Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.error,
-                                                      color: Colors.redAccent,
-                                                    ),
-                                                    Text(
-                                                      "  Unexpected Error",
-                                                      style: TextStyle(
-                                                        color: Color(0xFF5B3415),
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                content: new Text('Connection Timeout: @_@'),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context).pop();
-                                                      },
-                                                      child:
-                                                          const Text("OK", style: TextStyle(color: Color(0xFFFCC13A)))),
-                                                ],
-                                              );
-                                            },
-                                          );
                                         },
                                       );
                                     }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,6 +52,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget buildUI(BuildContext context) {
+    Timer _timer;
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -193,18 +197,59 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPrimary: Color(0xFFFCC13A), // foreground
                                 ),
                                 onPressed: () async {
-                                  int timeout = 60;
+                                  _timer = Timer(Duration(seconds: 30), () {
+                                    setState(
+                                          () {
+                                        isApiCallProcess = false;
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return new AlertDialog(
+                                              title: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.error,
+                                                    color: Colors.redAccent,
+                                                  ),
+                                                  Text(
+                                                    "  Unexpected Error",
+                                                    style: TextStyle(
+                                                      color: Color(0xFF5B3415),
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              content: Text(
+                                                  'Connection Timeout [@_@]: Check your Internet Connection',
+                                                  textAlign: TextAlign.left),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    child: const Text("OK",
+                                                        style: TextStyle(color: Color(0xFFFCC13A)))),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  });
                                   FocusManager.instance.primaryFocus?.unfocus();
                                   final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                                   if (validateAndSave()) {
                                     setState(() {
                                       isApiCallProcess = true;
+
                                     });
                                     APIService apiService = new APIService();
                                     apiService.login(requestModel).then(
                                       (value) {
                                         setState(() {
                                           isApiCallProcess = false;
+
                                         });
                                         if (value.authToken.isNotEmpty) {
                                           sharedPreferences.setString('data', requestModel.toJson().toString());
@@ -214,6 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           Fluttertoast.showToast(msg: "Login Successful");
                                           Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
                                         } else {
+                                          _timer.cancel();
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
@@ -246,47 +292,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                             },
                                           );
                                         }
-                                      },
-                                    ).timeout(
-                                      Duration(seconds: timeout),
-                                      onTimeout: () {
-                                        globalFormKey.currentState!.reset();
-                                        sharedPreferences.remove('data');
-                                        sharedPreferences.remove('authKey');
-                                        setState(() {
-                                          isApiCallProcess = false;
-                                        });
-                                        return showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return new AlertDialog(
-                                              title: Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.error,
-                                                    color: Colors.redAccent,
-                                                  ),
-                                                  Text(
-                                                    "  Unexpected Error",
-                                                    style: TextStyle(
-                                                      color: Color(0xFF5B3415),
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              content: new Text('Connection Timeout: @_@'),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                    child:
-                                                        const Text("OK", style: TextStyle(color: Color(0xFFFCC13A)))),
-                                              ],
-                                            );
-                                          },
-                                        );
                                       },
                                     );
                                   }
