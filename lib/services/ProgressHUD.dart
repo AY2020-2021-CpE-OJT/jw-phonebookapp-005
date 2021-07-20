@@ -28,7 +28,7 @@ class ProgressHUD extends StatelessWidget {
               color: color,
             ),
           ),
-          new Center (
+          new Center(
             child: new CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFCC13A)),
               backgroundColor: Color(0xFF5B3415),
@@ -39,7 +39,7 @@ class ProgressHUD extends StatelessWidget {
       widgetList.add(modal);
     }
     return Stack(
-        children: widgetList,
+      children: widgetList,
     );
   }
 }

@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:jw_phonebookapp_005/app_screens/about_screen.dart';
+import 'package:jw_phonebookapp_005/app_screens/account_screen.dart';
 import 'package:jw_phonebookapp_005/create_screens/create_contact.dart';
 import 'package:jw_phonebookapp_005/update_screens/update_contact.dart';
 import 'dart:convert';
@@ -16,6 +18,8 @@ class _HomePageState extends State<HomePage> {
   late String authKey = '';
   var authHeaders;
   var currentUser;
+  var scrollController = ScrollController();
+  var _isVisible = true;
 
   Future getAuthKeyData() async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -112,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   PopupMenuItem<int>(
                     enabled: false,
-                    child: new Container( width: 100,child: Text('App ver.x.x')),
+                    child: new Container(width: 100, child: Text('App ver.0.2.0')),
                   ),
                   PopupMenuDivider(),
                   PopupMenuItem<int>(
@@ -136,9 +140,8 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-
                 ],
-                onSelected: (item) => SelectedItem(context, item),
+                onSelected: (item) => selectedItem(context, item),
               ),
             )
           ],
@@ -149,126 +152,137 @@ class _HomePageState extends State<HomePage> {
                 ? RefreshIndicator(
                     color: Color(0xFFFCC13A),
                     child: ListView.builder(
-                        padding: EdgeInsets.all(12.0),
-                        itemCount: _users.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Dismissible(
-                            key: Key(_users[index].toString()),
-                            direction: DismissDirection.endToStart,
-                            background: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 14.0),
-                              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-                                Icon(Icons.delete_forever, color: Colors.white70),
-                                Text("Delete",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0, color: Colors.white70))
-                              ]),
-                              decoration: BoxDecoration(
-                                color: Colors.redAccent,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
+                      controller: scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.all(12.0),
+                      itemCount: _users.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Dismissible(
+                          key: Key(_users[index].toString()),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 14.0),
+                            child: Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+                              Icon(Icons.delete_forever, color: Colors.white70),
+                              Text("Delete",
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0, color: Colors.white70))
+                            ]),
+                            decoration: BoxDecoration(
+                              color: Colors.redAccent,
+                              borderRadius: BorderRadius.circular(15),
                             ),
-                            onDismissed: (direction) {
-                              String id = _users[index]['_id'].toString();
-                              String userDeleted = _users[index]['first_name'].toString();
-                              deleteContact(id);
-                              print("Status [Deleted]: [" + id + "]");
-                              setState(() {
-                                _users.removeAt(index);
-                              });
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('$userDeleted deleted'),
-                                ),
-                              );
-                            },
-                            confirmDismiss: (DismissDirection direction) async {
-                              return await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text("Confirm",
-                                        style: TextStyle(
-                                          color: Color(0xFF5B3415),
-                                          fontWeight: FontWeight.bold,
-                                        )),
-                                    content: const Text("Are you sure you wish to delete this contact?"),
-                                    actions: <Widget>[
-                                      TextButton(
-                                          onPressed: () => Navigator.of(context).pop(true),
-                                          child: const Text("DELETE", style: TextStyle(color: Colors.redAccent))),
-                                      TextButton(
-                                        onPressed: () => Navigator.of(context).pop(false),
-                                        child: const Text("CANCEL", style: TextStyle(color: Color(0xFFFCC13A))),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            child: Container(
-                              height: 80,
-                              color: Colors.transparent,
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                color: index % 2 == 0 ? Color(0xfffde09c) : Color(0xFFb7d9f3),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ListTile(
-                                      tileColor: Colors.transparent,
-                                      selectedTileColor: Colors.transparent,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
-                                      ),
-                                      leading: CircleAvatar(
-                                        backgroundColor: index % 2 == 0 ? Color(0xBF5B3415) : Color(0x800C2F5A),
-                                        radius: 30.0,
-                                        child: Text(_users[index]['first_name'][0] + _users[index]['last_name'][0],
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                color: index % 2 == 0 ? Color(0xFFfde09c) : Color(0xFFb7d9f3),
-                                                fontWeight: FontWeight.bold)),
-                                      ),
-                                      trailing: Icon(Icons.arrow_back_ios),
-                                      title: Text(
-                                        _name(_users[index]),
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: index % 2 == 0 ? Color(0xFF5B3415) : Color(0xFF0C2F5A),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      subtitle: Text(_phonenum(_users[index]),
+                          ),
+                          onDismissed: (direction) {
+                            String id = _users[index]['_id'].toString();
+                            String userDeleted = _users[index]['first_name'].toString();
+                            deleteContact(id);
+                            print("Status [Deleted]: [" + id + "]");
+                            setState(() {
+                              _users.removeAt(index);
+                              if (_users.length <= 8) {
+                                setState(() {
+                                  _isVisible = true;
+                                });
+                              }
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('$userDeleted deleted'),
+                              ),
+                            );
+                          },
+                          confirmDismiss: (DismissDirection direction) async {
+                            return await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text("Confirm Delete",
+                                      style: TextStyle(
+                                        color: Color(0xFF5B3415),
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                  content: const Text("Are you sure you wish to delete this contact?"),
+                                  actions: <Widget>[
+                                    Icon(Icons.delete_forever, color: Colors.redAccent),
+                                    TextButton(
+                                        onPressed: () => Navigator.of(context).pop(true),
+                                        child: const Text("DELETE", style: TextStyle(color: Colors.redAccent))),
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(false),
+                                      child: const Text("CANCEL", style: TextStyle(color: Color(0xFFFCC13A))),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: Container(
+                            height: 80,
+                            color: Colors.transparent,
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              color: index % 2 == 0 ? Color(0xfffde09c) : Color(0xFFb7d9f3),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ListTile(
+                                    tileColor: Colors.transparent,
+                                    selectedTileColor: Colors.transparent,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                    ),
+                                    leading: CircleAvatar(
+                                      backgroundColor: index % 2 == 0 ? Color(0xBF5B3415) : Color(0x800C2F5A),
+                                      radius: 30.0,
+                                      child: Text(_users[index]['first_name'][0] + _users[index]['last_name'][0],
                                           style: TextStyle(
-                                            color: index % 2 == 0 ? Color(0xBF5B3415) : Color(0xBF0C2F5A),
-                                          )),
-                                      onTap: () {
-                                        List<int> listNumbers = [];
-                                        for (int i = 0; i < _users[index]['phone_numbers'].length; i++) {
-                                          listNumbers.add(i + 1);
-                                        }
-                                        showDialog<String>(
-                                          context: context,
-                                          builder: (BuildContext context) => Padding(
-                                            padding: const EdgeInsets.all(12.0),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Container(
-                                                  child: AlertDialog(
-                                                    title: Text(
+                                              fontSize: 20,
+                                              color: index % 2 == 0 ? Color(0xFFfde09c) : Color(0xFFb7d9f3),
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                    trailing: Icon(Icons.arrow_back_ios),
+                                    title: Text(
+                                      _name(_users[index]),
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: index % 2 == 0 ? Color(0xFF5B3415) : Color(0xFF0C2F5A),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    subtitle: Text(_phonenum(_users[index]),
+                                        style: TextStyle(
+                                          color: index % 2 == 0 ? Color(0xBF5B3415) : Color(0xBF0C2F5A),
+                                        )),
+                                    onTap: () {
+                                      List<int> listNumbers = [];
+                                      for (int i = 0; i < _users[index]['phone_numbers'].length; i++) {
+                                        listNumbers.add(i + 1);
+                                      }
+                                      showDialog<String>(
+                                        context: context,
+                                        builder: (BuildContext context) => Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              child: AlertDialog(
+                                                content: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Text(
                                                       _name(_users[index]),
                                                       style: TextStyle(
                                                           color: Color(0xFF5B3415),
                                                           fontWeight: FontWeight.bold,
                                                           fontSize: 24),
                                                     ),
-                                                    content: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                    Divider(color: Color(0xFF5B3415)),
+                                                    Row(
                                                       children: [
                                                         Row(
                                                           children: [
@@ -277,85 +291,85 @@ class _HomePageState extends State<HomePage> {
                                                                     color: Color(0xFF5B3415),
                                                                     fontWeight: FontWeight.bold,
                                                                     fontSize: 20)),
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                Navigator.pushAndRemoveUntil(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                      builder: (context) => UpdateContact(
-                                                                          specificID: _users[index]['_id'].toString()),
-                                                                    ),
-                                                                    (_) => false);
-                                                              },
-                                                              child: const Text(
-                                                                'EDIT',
-                                                                style: TextStyle(
-                                                                  color: Color(0xFFFCC13A),
-                                                                  fontWeight: FontWeight.bold,
-                                                                ),
-                                                              ),
-                                                            ),
                                                           ],
                                                         ),
-                                                        SizedBox(
-                                                          height: 5,
-                                                        ),
-                                                        Container(
-                                                          child: Column(
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: List.generate(
-                                                              listNumbers.length,
-                                                              (iter) {
-                                                                return Column(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      height: 10,
-                                                                    ),
-                                                                    Text(
-                                                                      'Phone #' +
-                                                                          listNumbers[iter].toString() +
-                                                                          ':\t\t' +
-                                                                          _users[index]['phone_numbers'][iter]
-                                                                              .toString(),
-                                                                      style: TextStyle(
-                                                                          color: Color(0xFF5B3415), fontSize: 14),
-                                                                    ),
-                                                                  ],
-                                                                );
-                                                              },
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pushAndRemoveUntil(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder: (context) => UpdateContact(
+                                                                      specificID: _users[index]['_id'].toString()),
+                                                                ),
+                                                                (_) => false);
+                                                          },
+                                                          child: const Text(
+                                                            'EDIT',
+                                                            style: TextStyle(
+                                                              color: Color(0xFFFCC13A),
+                                                              fontWeight: FontWeight.bold,
                                                             ),
                                                           ),
                                                         ),
                                                       ],
                                                     ),
-                                                    contentPadding: EdgeInsets.fromLTRB(24, 12, 0, 0),
-                                                    actions: <Widget>[
-                                                      TextButton(
-                                                        onPressed: () => Navigator.pop(context, 'OK'),
-                                                        child: const Text(
-                                                          'OK',
-                                                          style: TextStyle(
-                                                            color: Color(0xFFFCC13A),
-                                                            fontWeight: FontWeight.bold,
-                                                          ),
+                                                    Divider(color: Color(0xFF5B3415)),
+                                                    Container(
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: List.generate(
+                                                          listNumbers.length,
+                                                          (iter) {
+                                                            return Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                              children: [
+                                                                Text(
+                                                                  'Phone #' +
+                                                                      listNumbers[iter].toString() +
+                                                                      ':\t\t' +
+                                                                      _users[index]['phone_numbers'][iter].toString(),
+                                                                  style:
+                                                                      TextStyle(color: Color(0xFF5B3415), fontSize: 14),
+                                                                ),
+                                                                Divider(
+                                                                  color: Color(0xFFFCC13A),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
                                                         ),
                                                       ),
-                                                    ],
-                                                    actionsPadding: EdgeInsets.fromLTRB(24, 0, 0, 0),
-                                                  ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
+                                                //contentPadding: EdgeInsets.fromLTRB(24, 12, 0, 0),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: () => Navigator.pop(context, 'OK'),
+                                                    child: const Text(
+                                                      'OK',
+                                                      style: TextStyle(
+                                                        color: Color(0xFFFCC13A),
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                                actionsPadding: EdgeInsets.fromLTRB(24, 0, 0, 0),
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
-                          );
-                        }),
+                          ),
+                        );
+                      },
+                    ),
                     onRefresh: _getData,
                   )
                 : Center(
@@ -366,15 +380,18 @@ class _HomePageState extends State<HomePage> {
                   );
           },
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => CreateNewContact()));
-          },
-          child: Icon(
-            Icons.add,
+        floatingActionButton: Visibility(
+          visible: _isVisible,
+          child: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => CreateNewContact()));
+            },
+            child: Icon(
+              Icons.add,
+            ),
+            foregroundColor: Color(0xFFFCC13A),
+            backgroundColor: Color(0xFF5B3415),
           ),
-          foregroundColor: Color(0xFFFCC13A),
-          backgroundColor: Color(0xFF5B3415),
         ),
       ),
     );
@@ -383,6 +400,29 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    scrollController.addListener(() async {
+      if (_users.length <= 8) {
+        setState(() {
+          _isVisible = true;
+        });
+      } else {
+        if (scrollController.position.atEdge) {
+          if (scrollController.position.pixels > 0) {
+            if (_isVisible) {
+              setState(() {
+                _isVisible = false;
+              });
+            }
+          }
+        } else {
+          if (!_isVisible) {
+            setState(() {
+              _isVisible = true;
+            });
+          }
+        }
+      }
+    });
     getAuthKeyData();
   }
 
@@ -393,13 +433,25 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  SelectedItem(BuildContext context, Object? item) {
+  selectedItem(BuildContext context, Object? item) {
     switch (item) {
       case 0:
         print("Account is Pressed");
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AccountScreen(currentUser: currentUser),
+          ),
+        );
         break;
       case 1:
         print("About is Pressed");
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AboutScreen(),
+          ),
+        );
         break;
       case 2:
         showDialog(

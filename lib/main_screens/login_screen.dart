@@ -121,8 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: Colors.redAccent,
                                   ),
                                 ),
-                                contentPadding:
-                                EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
+                                contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
                                 labelText: 'Email Address',
                                 labelStyle: TextStyle(
                                   color: emailFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
@@ -162,8 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: Colors.redAccent,
                                   ),
                                 ),
-                                contentPadding:
-                                EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
+                                contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
                                 labelText: 'Password',
                                 labelStyle: TextStyle(
                                   color: passwordFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
@@ -211,7 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         if (value.authToken.isNotEmpty) {
                                           sharedPreferences.setString('data', requestModel.toJson().toString());
                                           sharedPreferences.setString('authKey', value.authToken.toString());
-                                          sharedPreferences.setString('currentUser',value.message.toString());
+                                          sharedPreferences.setString('currentUser', value.message.toString());
                                           globalFormKey.currentState!.reset();
                                           Fluttertoast.showToast(msg: "Login Successful");
                                           Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);

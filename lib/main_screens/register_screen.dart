@@ -102,7 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 keyboardType: TextInputType.name,
                                 textInputAction: TextInputAction.next,
                                 textCapitalization: TextCapitalization.sentences,
-                                inputFormatters:[
+                                inputFormatters: [
                                   LengthLimitingTextInputFormatter(34),
                                 ],
                                 onSaved: (input) => regRequestModel.name = input!,
@@ -129,8 +129,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       color: Colors.redAccent,
                                     ),
                                   ),
-                                  contentPadding:
-                                  EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
+                                  contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
                                   labelText: 'Username',
                                   labelStyle: TextStyle(
                                     color: nameFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
@@ -170,8 +169,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       color: Colors.redAccent,
                                     ),
                                   ),
-                                  contentPadding:
-                                  EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
+                                  contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
                                   labelText: 'Email Address',
                                   labelStyle: TextStyle(
                                     color: emailFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
@@ -211,8 +209,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         color: Colors.redAccent,
                                       ),
                                     ),
-                                    contentPadding:
-                                    EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
+                                    contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
                                     labelText: 'Password',
                                     labelStyle: TextStyle(
                                       color: passwordFocus.hasFocus ? Color(0xFF5B3415) : Colors.grey,
@@ -252,7 +249,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       });
                                       RegisterService apiService = new RegisterService();
                                       apiService.login(regRequestModel).then(
-                                            (value) {
+                                        (value) {
                                           setState(() {
                                             isApiCallProcess = false;
                                           });
@@ -283,10 +280,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                     TextButton(
                                                         onPressed: () {
                                                           Navigator.of(context).pop();
-                                                          Navigator.pushNamedAndRemoveUntil(context, '/menu', (_) => false);
+                                                          Navigator.pushNamedAndRemoveUntil(
+                                                              context, '/menu', (_) => false);
                                                         },
-                                                        child:
-                                                        const Text("OK", style: TextStyle(color: Color(0xFFFCC13A)))),
+                                                        child: const Text("OK",
+                                                            style: TextStyle(color: Color(0xFFFCC13A)))),
                                                   ],
                                                 );
                                               },
@@ -323,8 +321,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                         onPressed: () {
                                                           Navigator.of(context).pop();
                                                         },
-                                                        child:
-                                                        const Text("OK", style: TextStyle(color: Color(0xFFFCC13A)))),
+                                                        child: const Text("OK",
+                                                            style: TextStyle(color: Color(0xFFFCC13A)))),
                                                   ],
                                                 );
                                               },
@@ -364,7 +362,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                         Navigator.of(context).pop();
                                                       },
                                                       child:
-                                                      const Text("OK", style: TextStyle(color: Color(0xFFFCC13A)))),
+                                                          const Text("OK", style: TextStyle(color: Color(0xFFFCC13A)))),
                                                 ],
                                               );
                                             },
@@ -411,6 +409,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       FocusScope.of(context).requestFocus(passwordFocus);
     });
   }
+
   bool validateAndSave() {
     final form = globalFormKey.currentState;
     if (form!.validate()) {
@@ -420,6 +419,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return false;
     }
   }
+
   Future<bool> _onBackPressed() {
     showDialog(
       context: context,

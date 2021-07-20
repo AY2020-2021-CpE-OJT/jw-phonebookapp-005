@@ -1,10 +1,9 @@
 class LoginResponseModel {
-
   String authToken;
   String error;
   String message;
 
-  LoginResponseModel({required this.authToken,  required this.error, required this.message});
+  LoginResponseModel({required this.authToken, required this.error, required this.message});
 
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
     return LoginResponseModel(
@@ -29,12 +28,13 @@ class LoginRequestModel {
     return map;
   }
 }
+
 class RegisterRequestModel {
   String name;
   String email;
   String password;
 
-  RegisterRequestModel({required this.name,required this.email, required this.password});
+  RegisterRequestModel({required this.name, required this.email, required this.password});
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {
