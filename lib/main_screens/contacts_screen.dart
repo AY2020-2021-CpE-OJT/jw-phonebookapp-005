@@ -20,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   var currentUser;
   var scrollController = ScrollController();
   var _isVisible = true;
+  var lengthList = 0;
 
   Future getAuthKeyData() async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -51,6 +52,7 @@ class _HomePageState extends State<HomePage> {
       _users = jsonDecode(result.body);
     });
     print("Status Code [" + result.statusCode.toString() + "]: All Data Fetched");
+    Fluttertoast.showToast(msg: "All Contacts fetched");
   }
 
   String _name(dynamic user) {
@@ -115,8 +117,9 @@ class _HomePageState extends State<HomePage> {
                     child: Text('About'),
                   ),
                   PopupMenuItem<int>(
-                    enabled: false,
-                    child: new Container(width: 100, child: Text('App ver.0.2.0')),
+                    value: 3,
+                    //enabled: false,
+                    child: new Container(width: 95, child: Text('App version')),
                   ),
                   PopupMenuDivider(),
                   PopupMenuItem<int>(
@@ -148,6 +151,7 @@ class _HomePageState extends State<HomePage> {
         ),
         body: FutureBuilder<List<dynamic>>(
           builder: (context, snapshot) {
+            this.lengthList = _users.length;
             return _users.length != 0
                 ? RefreshIndicator(
                     color: Color(0xFFFCC13A),
@@ -436,16 +440,16 @@ class _HomePageState extends State<HomePage> {
   selectedItem(BuildContext context, Object? item) {
     switch (item) {
       case 0:
-        print("Account is Pressed");
+        //print("Account is Pressed");
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => AccountScreen(currentUser: currentUser),
+            builder: (context) => AccountScreen(currentUser: currentUser, lengthList: lengthList),
           ),
         );
         break;
       case 1:
-        print("About is Pressed");
+        //print("About is Pressed");
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -471,6 +475,7 @@ class _HomePageState extends State<HomePage> {
                     sharedPreferences.remove('data');
                     sharedPreferences.remove('authKey');
                     sharedPreferences.remove('currentUser');
+                    sharedPreferences.remove('currentEmail');
                     Fluttertoast.showToast(msg: "Logged out Successfully");
                     Navigator.pushNamedAndRemoveUntil(context, '/menu', (_) => false);
                   },
@@ -492,6 +497,10 @@ class _HomePageState extends State<HomePage> {
           },
         );
         break;
+      case 3:
+        setState(() {
+          Fluttertoast.showToast(msg: "App ver.0.2.3-alpha", toastLength: Toast.LENGTH_SHORT);
+        });
     }
   }
 }
