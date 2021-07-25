@@ -85,21 +85,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             _onBackPressed();
                           });
                         },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Icon(
-                              Icons.arrow_back_rounded,
-                              color: Color(0xFFFCC13A),
-                            ),
-                            Text(
-                              '  Back',
-                              style: TextStyle(
-                                fontSize: 16,
+                        child: Container(
+                          width: 70,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Icon(
+                                Icons.arrow_back_rounded,
                                 color: Color(0xFFFCC13A),
                               ),
-                            ),
-                          ],
+                              Text(
+                                '  Back',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Color(0xFFFCC13A),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -267,7 +270,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   int alertTime = 3;
                                   _timer = Timer(Duration(seconds: 20), () {
                                     setState(
-                                      () {
+                                          () {
                                         isApiCallProcess = false;
                                         showDialog(
                                           context: context,
@@ -296,7 +299,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                       Navigator.of(context).pop();
                                                     },
                                                     child:
-                                                        const Text("OK", style: TextStyle(color: Color(0xFFFCC13A)))),
+                                                    const Text("OK", style: TextStyle(color: Color(0xFFFCC13A)))),
                                               ],
                                             );
                                           },
@@ -304,10 +307,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       },
                                     );
                                   });
+                                  if (validateAndSave() == false){
+                                    _timer.cancel();
+                                  }
                                   FocusManager.instance.primaryFocus?.unfocus();
                                   if (validateAndSave()) {
                                     setState(() {
                                       isApiCallProcess = true;
+
                                     });
                                     RegisterService apiService = new RegisterService();
                                     apiService.login(regRequestModel).then(
@@ -437,6 +444,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool validateAndSave() {
     final form = globalFormKey.currentState;
+
     if (form!.validate()) {
       form.save();
       return true;

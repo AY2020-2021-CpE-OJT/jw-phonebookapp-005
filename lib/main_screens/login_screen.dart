@@ -83,21 +83,24 @@ class _LoginScreenState extends State<LoginScreen> {
                           Navigator.of(context).pop();
                         });
                       },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Icon(
-                            Icons.arrow_back_rounded,
-                            color: Color(0xFFFCC13A),
-                          ),
-                          Text(
-                            '  Back',
-                            style: TextStyle(
-                              fontSize: 16,
+                      child: Container(
+                        width: 70,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Icon(
+                              Icons.arrow_back_rounded,
                               color: Color(0xFFFCC13A),
                             ),
-                          ),
-                        ],
+                            Text(
+                              '  Back',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFFFCC13A),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -257,6 +260,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     },
                                   );
                                 });
+                                if (validateAndSave() == false){
+                                  _timer.cancel();
+                                }
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                                 if (validateAndSave()) {

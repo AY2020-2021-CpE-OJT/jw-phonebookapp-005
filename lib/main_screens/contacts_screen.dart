@@ -499,7 +499,7 @@ class _HomePageState extends State<HomePage> {
         break;
       case 3:
         setState(() {
-          Fluttertoast.showToast(msg: "App ver.0.2.3-alpha", toastLength: Toast.LENGTH_SHORT);
+          Fluttertoast.showToast(msg: "App ver.0.2.1-alpha", toastLength: Toast.LENGTH_SHORT);
         });
     }
   }
