@@ -1,10 +1,10 @@
 
 # ![](assets/icon/logo-50x50.png)  Phonebook Application
 
-**Phonebook application** that uses **Flutter** SDK via **Android Studio IDE** as a front-end. With a back-end of **Node.js REST API** it uses **Express and CORS middleware**, **Mongoose**, **MongoDB Atlas**, **Joi**, and **JSON Web Token**. It features **C**reate, **R**ead, **U**pdate and **D**elete with **Authentication** and **Validation** upon login and **Creating or Updating Contacts(No UI yet)**. It is integrated to Cloud via **Heroku**.
+**Phonebook application** that uses **Flutter** SDK via **Android Studio IDE** as a front-end. With a back-end of [[Node.js REST API](https://github.com/AY2020-2021-CpE-OJT/JW-Phonebook-API-TASK005)] it uses **Express and CORS middleware**, **Mongoose**, **MongoDB Atlas**, **Joi**, and **JSON Web Token**. It features **C**reate, **R**ead, **U**pdate and **D**elete with **Authentication** and **Validation** upon login and **Creating or Updating Contacts(No UI yet)**. It is integrated to Cloud via **Heroku**.
 
 >## Release
->**July 25, 2021** [[Latest Release](https://github.com/AY2020-2021-CpE-OJT/jw-phonebookapp-005/releases/tag/v0.2.1-alpha)] Phonebook APP [Android] v0.2.1-alpha 
+>**July 25, 2021** [[Latest Release](https://github.com/AY2020-2021-CpE-OJT/jw-phonebookapp-005/releases/tag/v0.2.1-alpha)] Phonebook APP [Android] ver.0.2.1-alpha 
 
 
 
