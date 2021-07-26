@@ -3,7 +3,7 @@
 
 **Phonebook application** that uses **Flutter** SDK via **Android Studio IDE** as a front-end. With a back-end of **Node.js REST API** it uses **Express and CORS middleware**, **Mongoose**, **MongoDB Atlas**, **Joi**, and **JSON Web Token**. It features **C**reate, **R**ead, **U**pdate and **D**elete with **Authentication** and **Validation** upon login and **Creating or Updating Contacts(No UI yet)**. It is integrated to Cloud via **Heroku**.
 
->## @icon-info-circle Release
+>## Release
 >**July 25, 2021** [[Latest Release](https://github.com/AY2020-2021-CpE-OJT/jw-phonebookapp-005/releases/tag/v0.2.1-alpha)] Phonebook APP [Android] v0.2.1-alpha 
 
 
@@ -30,20 +30,28 @@ A preview of the application's screen.
 >![](screenshots/1_ToApp.gif)
 
 >#### Register Screen
+> Correct form Value -> Validation Server-side -> Validation Client-side -> Back Press Dialog
+>
 >![](screenshots/2_Account%20Creation.gif)
 >![](screenshots/3_Validation_1.gif)
 >![](screenshots/4_Validation_2.gif)
 >![](screenshots/5_BackDialog.gif)
 
 >#### Login Screen -> Contact List
+> Correct Form Value login 
+>
 >![](screenshots/6_login.gif)
 
 >#### Contact List
+> List of Contacts -> View Specific Contact Data -> Refresh List 
+>
 >![](screenshots/7_ListView.gif)
 >![](screenshots/8_ViewContacts.gif)
 >![](screenshots/13_RefreshList.gif)
 
 >#### Create New Contact
+> Create New Contact then to List -> Refresh Values to null -> Remove Individual Values from Forms
+>
 >![](screenshots/9_CreateAcc_to_list.gif)
 >![](screenshots/10_createAcc_refresh.gif)
 >![](screenshots/11_CreateAcc_removeIndividual.gif)
@@ -52,18 +60,22 @@ A preview of the application's screen.
 >![](screenshots/12_delete.gif)
 
 >#### Edit a Contact
+> Correct Form Value then to List -> Back Dialog -> Remove Specific Number -> Remove all Numbers
+>
 >![](screenshots/14_EditContact.gif)
 >![](screenshots/15_EditContactBack.gif)
 >![](screenshots/16_EditContactRemove.gif)
 >![](screenshots/17_EditContactNewPhone.gif)
 
 >#### Misc
+> Toast of App Version -> View Current Account Accessing the APP -> About the app -> Stay Logged in when Close -> Upon Logged out remains Logged out.
+>
 >![](screenshots/18_APpVer.gif)
 >![](screenshots/19_Account.gif)
 >![](screenshots/20_About.gif)
 >![](screenshots/21_sharedPref.gif)
 >![](screenshots/22_sharedPref_2.gif)
->> **@icon-info-circle Note:** **GIF are Low FPS** and **High Contrast** due to **Recording Issue**. You can Download the 
+>> **Note:** **GIF are Low FPS** and **High Contrast** due to **Recording Issue**. **Initialize** the numbers of the user first when updating a contact. You can Download the 
 [[Latest Release](https://github.com/AY2020-2021-CpE-OJT/jw-phonebookapp-005/releases/tag/v0.2.1-alpha)] to view the alpha version of the application.
 
 ## Future
