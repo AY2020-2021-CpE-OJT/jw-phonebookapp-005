@@ -119,7 +119,6 @@ class _AccountScreenState extends State<AccountScreen> {
           children: [
             Container(
               width: double.infinity,
-              height: 400,
               padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
               margin: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
               decoration: BoxDecoration(
@@ -277,8 +276,9 @@ class _AccountScreenState extends State<AccountScreen> {
                             SizedBox(
                               height: 10,
                             ),
-                            Text('The user $currentUser is accessing the Public Database',
+                            Text('The user $currentUser is accessing the Public Database\n',
                                 style: TextStyle(color: Color(0x805B3415))),
+
                           ],
                         )
                       ],
